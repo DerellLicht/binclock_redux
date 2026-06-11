@@ -9,6 +9,8 @@ USE_STATIC = NO
 #  However, programs built with clang++ will require libc++.dll.
 #  in order to be used elsewhere.
 #  That is why the executable files are smaller than TDM ...
+#  (This can be eliminated by linking with -static, 
+#  but that will massively increase file size.)
 ifeq ($(USE_64BIT),YES)
 TOOLS=d:\tdm64\bin
 else
