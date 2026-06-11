@@ -1,0 +1,134 @@
+//****************************************************************************
+//  Copyright (c) 2009-2026  Derell Licht
+//  config.cpp - manage configuration data file
+//
+//  This program is licenced under Creative Commons CC0 1.0 Universal
+// 
+//  The person who associated a work with this deed has dedicated the work to the public domain 
+//  by waiving all of his or her rights to the work worldwide under copyright law, including all 
+//  related and neighboring rights, to the extent allowed by law.
+// 
+//  You can copy, modify, distribute and perform the work, even for commercial purposes, 
+//  all without asking permission.
+// 
+//****************************************************************************
+//  Filename will be same as executable, but will have .ini extensions.
+//  Config file will be stored in same location as executable file.
+//  Comments will begin with '#'
+//  First line:
+//  device_count=%u
+//  Subsequent file will have a section for each device.
+//****************************************************************************
+#include <windows.h>
+#include <stdio.h>   //  fopen, etc
+#include <stdlib.h>  //  atoi()
+#include <tchar.h>
+
+//lint -esym(746, _wfopen, fgetws)
+//lint -esym(1055, _wfopen, fgetws)
+//lint -e64  Type mismatch (initialization) (struct _iobuf * = int)
+
+#include "common.h"
+#include "binclock.h"
+
+bool show_winmsgs = false ;
+
+//****************************************************************************
+static TCHAR ini_name[MAX_PATH_LEN+1] = _T("") ;
+
+uint x_pos = 0 ;
+uint y_pos = 200 ;
+uint tbar_on = 0 ;
+// uint ip_iface_idx = 0 ;  //  0 means read all, otherwise read selected iface
+
+//****************************************************************************
+static void strip_comments(TCHAR *bfr)
+{
+   TCHAR *hd = _tcschr(bfr, _T('#')) ;
+   if (hd != 0)
+      *hd = 0 ;
+}
+
+//****************************************************************************
+static LRESULT save_default_ini_file(void)
+{
+   FILE *fd = _tfopen(ini_name, _T("wt")) ;
+   if (fd == 0) {
+      LRESULT result = (LRESULT) GetLastError() ;
+      syslog(_T("%s open: %s\n"), ini_name, get_system_message(result)) ;
+      return result;
+   }
+   //  save any global vars
+   _ftprintf(fd, _T("bitmap_idx=%u\n"), bitmap_idx) ;
+   _ftprintf(fd, _T("bit_menu=%u\n"), bit_menu) ;
+   _ftprintf(fd, _T("attr_on=%u\n"), crfg) ;
+   _ftprintf(fd, _T("attr_off=%u\n"), crbg) ;
+   _ftprintf(fd, _T("layout=%u\n"), layout_method) ;
+   _ftprintf(fd, _T("winmsgs=%u\n"), (show_winmsgs) ? 1 : 0) ;
+   // _ftprintf(fd, _T("ip_iface=%u\n"), ip_iface_idx) ;
+   fclose(fd) ;
+   return ERROR_SUCCESS;
+}
+
+//****************************************************************************
+LRESULT save_cfg_file(void)
+{
+   return save_default_ini_file() ;
+}
+
+//****************************************************************************
+//  - derive ini filename from exe filename
+//  - attempt to open file.
+//  - if file does not exist, create it, with device_count=0
+//    no other data.
+//  - if file *does* exist, open/read it, create initial configuration
+//****************************************************************************
+LRESULT read_config_file(void)
+{
+   TCHAR inpstr[128] ;
+   uint uvalue ;
+   LRESULT result = derive_filename_from_exec(ini_name, (TCHAR *) _T(".ini")) ;
+   if (result != 0)
+      return result;
+
+   if (show_winmsgs) {
+      syslog(_T("ini file: %s\n"), ini_name);
+   }
+   FILE *fd = _tfopen(ini_name, _T("rt")) ;
+   if (fd == 0) {
+      return save_default_ini_file() ;
+   }
+
+   while (_fgetts(inpstr, sizeof(inpstr), fd) != 0) {
+      strip_comments(inpstr) ;
+      strip_newlines(inpstr) ;
+      if (_tcslen(inpstr) == 0)
+         continue;
+
+      if (_tcsncmp(inpstr, _T("bitmap_idx="), 11) == 0) {
+         // syslog("enabling factory mode\n") ;
+         bitmap_idx = (uint) _tcstoul(&inpstr[11], 0, 0) ;
+      } else
+      if (_tcsncmp(inpstr, _T("bit_menu="), 9) == 0) {
+         bit_menu = (uint) _tcstoul(&inpstr[9], 0, 0) ;
+      } else
+      if (_tcsncmp(inpstr, _T("layout="), 7) == 0) {
+         layout_method = (uint) _tcstoul(&inpstr[7], 0, 0) ;
+      } else
+      if (_tcsncmp(inpstr, _T("winmsgs="), 8) == 0) {
+         uvalue = (uint) _tcstoul(&inpstr[8], 0, 0) ;
+         show_winmsgs = (uvalue == 0) ? false : true ;
+      } else
+      if (_tcsncmp(inpstr, _T("attr_on="), 8) == 0) {
+         crfg = (uint) _tcstoul(&inpstr[8], 0, 0) ;
+      } else
+      if (_tcsncmp(inpstr, _T("attr_off="), 9) == 0) {
+         crbg = (uint) _tcstoul(&inpstr[9], 0, 0) ;
+      } else
+      {
+         syslog(_T("unknown: [%s]\n"), inpstr) ;
+      }
+   }
+   return 0;
+}
+
