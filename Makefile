@@ -74,7 +74,10 @@ rc.o: $(BIN).rc
 
 # DO NOT DELETE
 
-binclock.o: version.h resource.h binclock.h bclk_elements.h
-about.o: resource.h version.h
-bclk_elements.o: binclock.h bclk_elements.h
-config.o: binclock.h
+binclock.o: version.h resource.h der_libs/common.h binclock.h bclk_elements.h
+about.o: resource.h version.h der_libs/hyperlinks.h
+bclk_elements.o: der_libs/common.h binclock.h bclk_elements.h
+config.o: der_libs/common.h binclock.h
+der_libs/hyperlinks.o: der_libs/iface_32_64.h der_libs/hyperlinks.h
+der_libs/common_funcs.o: der_libs/common.h
+der_libs/common_win.o: der_libs/common.h der_libs/commonw.h
