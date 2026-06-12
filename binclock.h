@@ -1,8 +1,3 @@
-// extern HINSTANCE g_hInst ;
-
-#define  WM_DO_COMM_TASK    (WM_USER + 101)
-#define  WM_COMM_TASK_DONE  (WM_USER + 102)
-
 //  config.cpp
 extern unsigned bitmap_idx ;
 extern unsigned bit_menu ;
