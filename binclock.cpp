@@ -84,12 +84,6 @@ unsigned layout_method = 0 ;
 unsigned crfg = RGB(128, 255, 0) ;
 unsigned crbg = RGB(128, 64, 0) ;
 
-//***********************************************************************
-#ifdef  READY_FOR_BCLK_ELEMENTS
-#define  NUM_ELEMENTS   10
-static bclock_element *element_list[NUM_ELEMENTS] ;
-#endif
-
 //*******************************************************************
 static uint screen_width  = 0 ;
 static uint screen_height = 0 ;
@@ -139,21 +133,16 @@ static void set_window_position(HWND hwnd)
    GetWindowRect(hwnd, &rect) ;
    uint dy = rect.bottom - rect.top ;
    uint dx = rect.right - rect.left ;
-   // uint caption_cy = (uint) GetSystemMetrics(SM_CYSMCAPTION) ;
 
-   // if (tbar_on) {
-      SetWindowPos(hwnd, NULL, x_pos, y_pos, dx, dy, SWP_NOZORDER | SWP_DRAWFRAME );
-   // } else {
-   //    //  well, this sequence is not very efficient, but it works,
-   //    //  and it's only run once when program is started...
-   //    SetWindowPos(hwnd, NULL, x_pos, y_pos, dx, dy, SWP_NOZORDER | SWP_DRAWFRAME );
-   //    toggle_title_bar(hwnd);
-   //    y_pos -= caption_cy ;
-   //    SetWindowPos( hwnd, NULL, x_pos, y_pos, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME );
-   // }
-
+   SetWindowPos(hwnd, NULL, x_pos, y_pos, dx, dy, SWP_NOZORDER | SWP_DRAWFRAME );
    save_cfg_file() ;
 }
+
+//***********************************************************************
+#ifdef  READY_FOR_BCLK_ELEMENTS
+#define  NUM_ELEMENTS   10
+static bclock_element *element_list[NUM_ELEMENTS] ;
+#endif
 
 //*********************************************************************
 static void load_bitmap_files(HWND hwnd)
