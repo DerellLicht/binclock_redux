@@ -62,6 +62,11 @@ private:
    void Box(HDC hdc, int x0, int y0, int x1, int y1, unsigned style, COLORREF fgattr, COLORREF bgattr);
    void Solid_Rect(HDC hdc, int xl, int yu, int xr, int yl, COLORREF Color);
    void draw_frame(HDC hdc, unsigned x, unsigned y, unsigned on_noff);
+
+   //  bypass the assignment operator and copy constructor
+   bclock_element &operator=(const bclock_element &src) ;
+   bclock_element(const bclock_element&);
+   
    
 public:
    bclock_element(HINSTANCE g_hInst, char *name, unsigned width, unsigned be_flags, 

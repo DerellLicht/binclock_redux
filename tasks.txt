@@ -6,8 +6,6 @@ Remaining tasks:
 
 > bclk_elements class needs *major* refactoring, to reflect modern C++ aspects
 
-> Add support for -Weffc++
-
 > run lint and check
 
 > drawn-blocks option has multiple issues:

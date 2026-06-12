@@ -80,18 +80,41 @@ unsigned bclock_element::next_led_color(void)
 
 //***********************************************************************
 bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width, 
-   unsigned be_flags, int mask_index, unsigned off_index, unsigned start_element)
+   unsigned be_flags, int mask_index, unsigned off_index, unsigned start_element) :
+   bm_name(""),
+   el_width(width),
+   el_height(0),
+   flags(be_flags),
+   mask_idx(mask_index), //  negative means no mask is used
+   off_idx(off_index),
+   x_offset(0),
+   y_offset(0),
+   skip_elements(nullptr),
+   num_elements(0),
+   curr_element(start_element),
+   hSpriteBitmap(0),
+   menu_hdl(0),
+   menu_code(0),
+   object_code(0),
+   color_menu_str(NULL),
+   menu_str(""),
+   errstr(""),
+   attr_lhigh(0),
+   attr_llow(0),
+   attr_high(0),
+   attr_low(0),
+   bit_menu(0)
 {
    BITMAP bm;
-   flags = be_flags ;
-   el_width = width ;
-   mask_idx = mask_index ;
-   curr_element = start_element ;
-   off_idx = off_index ;
-   x_offset = 0 ;
-   y_offset = 0 ;
+   // el_width = width ;
+   // flags = be_flags ;
+   // mask_idx = mask_index ;
+   // off_idx = off_index ;
+   // x_offset = 0 ;
+   // y_offset = 0 ;
+   // curr_element = start_element ;
    object_code = be_object_num++ ;
-   menu_hdl = 0 ;
+   // menu_hdl = 0 ;
 
    //  if no filename provided, assume BE_DRAWN format
    if (name == 0) {
@@ -151,18 +174,41 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
 
 //***********************************************************************
 bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned width, 
-   unsigned be_flags, int mask_index, unsigned off_index, unsigned start_element)
+   unsigned be_flags, int mask_index, unsigned off_index, unsigned start_element) :
+   bm_name(""),
+   el_width(width),
+   el_height(0),
+   flags(be_flags),
+   mask_idx(mask_index), //  negative means no mask is used
+   off_idx(off_index),
+   x_offset(0),
+   y_offset(0),
+   skip_elements(nullptr),
+   num_elements(0),
+   curr_element(start_element),
+   hSpriteBitmap(0),
+   menu_hdl(0),
+   menu_code(0),
+   object_code(0),
+   color_menu_str(NULL),
+   menu_str(""),
+   errstr(""),
+   attr_lhigh(0),
+   attr_llow(0),
+   attr_high(0),
+   attr_low(0),
+   bit_menu(0)
 {
    BITMAP bm;
-   flags = be_flags ;
-   el_width = width ;
-   mask_idx = mask_index ;
-   curr_element = start_element ;
-   off_idx = off_index ;
-   x_offset = 0 ;
-   y_offset = 0 ;
+   // flags = be_flags ;
+   // el_width = width ;
+   // mask_idx = mask_index ;
+   // curr_element = start_element ;
+   // off_idx = off_index ;
+   // x_offset = 0 ;
+   // y_offset = 0 ;
    object_code = be_object_num++ ;
-   menu_hdl = 0 ;
+   // menu_hdl = 0 ;
 
    bm_name[0] = 0 ;
    hSpriteBitmap = (HBITMAP) LoadImage (g_hInst, MAKEINTRESOURCE(bm_resource), 
