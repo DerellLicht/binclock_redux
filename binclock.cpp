@@ -22,9 +22,6 @@ static char szClassName[] = "binclock" ;
 #include <time.h>
 #include <tchar.h>
 
-#define  READY_FOR_BCLK_ELEMENTS
-// #undef  READY_FOR_BCLK_ELEMENTS
-
 //lint -esym(528, do_command, do_close, do_timer, do_destroy, do_user, do_init_dialog, do_sizemove, winproc_table)
 //lint -esym(715, hwnd, private_data, message, wParam, lParam)
 
@@ -139,15 +136,12 @@ static void set_window_position(HWND hwnd)
 }
 
 //***********************************************************************
-#ifdef  READY_FOR_BCLK_ELEMENTS
 #define  NUM_ELEMENTS   10
 static bclock_element *element_list[NUM_ELEMENTS] ;
-#endif
 
 //*********************************************************************
 static void load_bitmap_files(HWND hwnd)
 {
-#ifdef  READY_FOR_BCLK_ELEMENTS
    HDC hdc = GetDC(hwnd) ;
    unsigned menu_code = ID_LAMPS0 ;
    bclock_element *be_temp ;
@@ -294,11 +288,9 @@ static void load_bitmap_files(HWND hwnd)
    }
 
    ReleaseDC (hwnd, hdc) ;
-#endif   
 }
 
 //*********************************************************************
-#ifdef  READY_FOR_BCLK_ELEMENTS
 static void draw_horiz_binary_time(HDC hdc, unsigned row, unsigned tvalue)
 {
    unsigned mask = 0x20 ;
@@ -323,7 +315,7 @@ static void draw_bcd_time(HDC hdc, unsigned row, unsigned time_seg, unsigned dra
    if (draw_flags & 1)
       element_list[bitmap_idx]->draw_sprite(hdc, (time_seg & 1), row, SECS_ROW);
 }
-#endif
+
 //*********************************************************************
 static void update_timer_count(HWND hwnd)
 {
@@ -340,7 +332,6 @@ static void update_timer_count(HWND hwnd)
    wsprintf(tstr, " %02d", gtm->tm_sec) ;
    SetWindowText(hwndSecs, tstr) ;
    
-#ifdef  READY_FOR_BCLK_ELEMENTS
    HDC hdc = GetDC(hwnd) ;
    //  method 0 shows hours, mins, secs as 8-bit binary values, horizontally
    if (layout_method == 0) {
@@ -374,7 +365,6 @@ static void update_timer_count(HWND hwnd)
    }
 
    ReleaseDC (hwnd, hdc) ;
-#endif   
 }
 
 //*******************************************************************
@@ -391,9 +381,7 @@ static bool do_init_dialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
    verify_screen_position() ;
    set_window_position(hwnd) ;
    
-#ifdef  READY_FOR_BCLK_ELEMENTS
    load_bitmap_files(hwnd) ;
-#endif   
 
    hwndHours = GetDlgItem(hwnd, IDC_HOURS) ;
    hwndMins  = GetDlgItem(hwnd, IDC_MINS) ;
@@ -534,7 +522,6 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          AppendMenu(hPopMenu, MF_STRING, ID_UNUSED, _T("derelict's binary clock")) ;
          AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
 
-#ifdef  READY_FOR_BCLK_ELEMENTS
          for (uint j=0; j<NUM_ELEMENTS; j++) {
             // AppendMenu(hPopMenu, MF_STRING, 
             //       element_list[j]->get_menu_id(),
@@ -543,7 +530,6 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
             // menu_handles[j] = hMenuTemp ;
             AppendMenu(hPopMenu, MF_POPUP, (UINT) hMenuTemp, _T(element_list[j]->get_menu_str())) ;
          }
-#endif            
 
          AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
          // AppendMenu(hPopMenu, MF_STRING, ID_NEXT_COLOR,    _T("Select next color"));
@@ -553,21 +539,13 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_WINMSGS, _T("Toggle Winmsgs"));
          AppendMenu(hPopMenu, MF_STRING, ID_TRAYEXIT,       _T("Exit from program"));
          // CheckMenuItem (hPopMenu, (UINT) menu_handles[bitmap_idx], MF_CHECKED);
-#ifdef  READY_FOR_BCLK_ELEMENTS
          CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
-#endif            
       }
 
       SetForegroundWindow(hwnd);
       TrackPopupMenu(hPopMenu,TPM_LEFTALIGN|TPM_LEFTBUTTON|TPM_BOTTOMALIGN,
          lpClickPoint.x, lpClickPoint.y, 0, hwnd, NULL);
       break;
-
-   // case WM_RBUTTONUP:
-   //    // show window as response to right-clicking the tray icon
-   //    ShowWindow (hwnd, SW_SHOWNORMAL);
-   //    SetForegroundWindow (hwnd);
-   //    break;
    }  //lint !e744
    return true ;
 }
