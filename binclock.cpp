@@ -219,7 +219,8 @@ static void load_bitmap_files(HWND hwnd)
    //                 width         mask offset start_el
    be_temp = new bclock_element(g_hInst, (char *) NULL, 14, BE_DRAWN, 0,   0,     0);
    menu_code = be_temp->add_menu_data(menu_code, "Bound Boxes") ;
-   static char * const drawn_colors[] = { " ", "select this element", "change ON color", "change OFF color", 0 } ; 
+   static char * const drawn_colors[] = 
+      { " ", "select this element", "change ON color", "change OFF color", 0 } ; 
    for (j=0; drawn_colors[j] != 0; j++) {
       // OutputDebugString(drawn_colors[j]) ;
       be_temp->add_color_menu_str(j, drawn_colors[j]) ;
