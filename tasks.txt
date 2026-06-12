@@ -3,3 +3,5 @@ Remaining tasks:
 1. adjust screen spacing of LEDs
 
 2. run lint and check
+
+3. convert elements[] array into <vector>
