@@ -8,7 +8,7 @@
 #define  USE_VECTOR_CLASS
 // #undef  USE_VECTOR_CLASS
 
-static char szClassName[] = "about_hlinks" ;
+static char szClassName[] = "binclock" ;
 
 #include <windows.h>
 #ifdef USE_VECTOR_CLASS
@@ -21,8 +21,8 @@ static char szClassName[] = "about_hlinks" ;
 #include <time.h>
 #include <tchar.h>
 
-// #define  READY_FOR_BCLK_ELEMENTS
-#undef  READY_FOR_BCLK_ELEMENTS
+#define  READY_FOR_BCLK_ELEMENTS
+// #undef  READY_FOR_BCLK_ELEMENTS
 
 //lint -esym(715, hwnd, private_data, message, wParam, lParam)
 
@@ -82,8 +82,14 @@ unsigned layout_method = 0 ;
 unsigned crfg = RGB(128, 255, 0) ;
 unsigned crbg = RGB(128, 64, 0) ;
 
+//***********************************************************************
+#ifdef  READY_FOR_BCLK_ELEMENTS
+#define  NUM_ELEMENTS   10
+static bclock_element *element_list[NUM_ELEMENTS] ;
+#endif
+
 //*********************************************************************
-void load_bitmap_files(HWND hwnd)
+static void load_bitmap_files(HWND hwnd)
 {
 #ifdef  READY_FOR_BCLK_ELEMENTS
    HDC hdc = GetDC(hwnd) ;
@@ -323,7 +329,9 @@ static bool do_init_dialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
    SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM) LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_APPICON)));
    SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM) LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_APPICON)));
 
-   // load_bitmap_files(hwnd) ;
+#ifdef  READY_FOR_BCLK_ELEMENTS
+   load_bitmap_files(hwnd) ;
+#endif   
 
    hwndHours = GetDlgItem(hwnd, IDC_HOURS) ;
    hwndMins  = GetDlgItem(hwnd, IDC_MINS) ;
@@ -375,7 +383,61 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
    // putf(&this_term, "WM_COMMAND: cmd=%u, target=%u", cmd, target) ;
    // If a button is clicked...
    if (cmd == BN_CLICKED) {
+      unsigned found = 0 ;
+      //******************************************************
+      //  first check for a hit among the block_elements
+      //******************************************************
+      for (uint j=0; j<NUM_ELEMENTS; j++) {
+         // if (element_list[j]->get_menu_id() == LOWORD (wParam)) {
+         int temp_idx = element_list[j]->get_menu_id(LOWORD (wParam)) ;
+         if (temp_idx >= 0) {
+            // bitmap_idx = LOWORD (wParam) - ID_LAMPS0;
+            CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_UNCHECKED);
+            bitmap_idx = (unsigned) temp_idx ;
+            CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
+            // inireg.set_param("bitmap_idx", bitmap_idx) ;
+            save_cfg_file();
+            found = 1 ;
+            break;
+         }
+      }
+      if (found) {
+         // syslog("found element %u, WParam: %u\n", j, wParam);
+         InvalidateRect (hwnd, NULL, TRUE) ;
+         return true ;
+      }
+         
       switch (target) {
+         // case ID_NEXT_COLOR: 
+         //    element_list[bitmap_idx]->next_led_color() ;
+         //    break;
+
+         case ID_TOGGLE_LAYOUT:
+            layout_method ^= 1 ;
+            // inireg.set_param("layout", layout_method) ;
+            save_cfg_file();
+            InvalidateRect (hwnd, NULL, TRUE) ;
+            return true ;
+            
+         case ID_TOGGLE_WINMSGS:
+            show_winmsgs = !show_winmsgs ;
+            save_cfg_file();
+            syslog("winmsgs %s\n", (show_winmsgs) ? "enabled" : "disabled") ;
+            InvalidateRect (hwnd, NULL, TRUE) ;
+            return true ;
+
+         case ID_MINIMIZE:
+            ShowWindow (hwnd, SW_HIDE);
+            return true ;
+
+         case ID_TRAYOPEN:
+            ShowWindow (hwnd, SW_SHOW);   // open dialog
+            return true ;
+
+         case ID_TRAYEXIT:
+            DestroyWindow (hwnd);
+            return true ;
+
       case IDB_ABOUT:
          CmdAbout(hwnd);
          return true;
@@ -392,53 +454,53 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
 static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOID private_data)
 {
    POINT lpClickPoint;
-      // event genereted by a system tray - the type of tray event that
-      // generated the message can be found in lParam
-      switch (lParam)   {
-      case WM_RBUTTONUP:
-      case WM_LBUTTONUP:
-         GetCursorPos(&lpClickPoint);
-         if (hPopMenu == 0) {
-            hPopMenu = CreatePopupMenu();
+   // event genereted by a system tray - the type of tray event that
+   // generated the message can be found in lParam
+   switch (lParam)   {
+   case WM_RBUTTONUP:
+   case WM_LBUTTONUP:
+      GetCursorPos(&lpClickPoint);
+      if (hPopMenu == 0) {
+         hPopMenu = CreatePopupMenu();
 
-            AppendMenu(hPopMenu, MF_STRING, ID_UNUSED, _T("derelict's binary clock")) ;
-            AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
+         AppendMenu(hPopMenu, MF_STRING, ID_UNUSED, _T("derelict's binary clock")) ;
+         AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
 
 #ifdef  READY_FOR_BCLK_ELEMENTS
-            for (j=0; j<NUM_ELEMENTS; j++) {
-               // AppendMenu(hPopMenu, MF_STRING, 
-               //       element_list[j]->get_menu_id(),
-               //    _T(element_list[j]->get_menu_str())) ;
-               HMENU hMenuTemp = (HMENU) element_list[j]->build_options_menu() ;
-               // menu_handles[j] = hMenuTemp ;
-               AppendMenu(hPopMenu, MF_POPUP, (UINT) hMenuTemp, _T(element_list[j]->get_menu_str())) ;
-            }
-#endif            
-
-            AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
-            // AppendMenu(hPopMenu, MF_STRING, ID_NEXT_COLOR,    _T("Select next color"));
-            AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_LAYOUT,  _T("Toggle time format"));
-            AppendMenu(hPopMenu, MF_STRING, ID_TRAYOPEN,       _T("Open clock window"));
-            AppendMenu(hPopMenu, MF_STRING, ID_MINIMIZE,       _T("Minimize window"));
-            AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_WINMSGS, _T("Toggle Winmsgs"));
-            AppendMenu(hPopMenu, MF_STRING, ID_TRAYEXIT,       _T("Exit from program"));
-            // CheckMenuItem (hPopMenu, (UINT) menu_handles[bitmap_idx], MF_CHECKED);
-#ifdef  READY_FOR_BCLK_ELEMENTS
-            CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
-#endif            
+         for (uint j=0; j<NUM_ELEMENTS; j++) {
+            // AppendMenu(hPopMenu, MF_STRING, 
+            //       element_list[j]->get_menu_id(),
+            //    _T(element_list[j]->get_menu_str())) ;
+            HMENU hMenuTemp = (HMENU) element_list[j]->build_options_menu() ;
+            // menu_handles[j] = hMenuTemp ;
+            AppendMenu(hPopMenu, MF_POPUP, (UINT) hMenuTemp, _T(element_list[j]->get_menu_str())) ;
          }
+#endif            
 
-         SetForegroundWindow(hwnd);
-         TrackPopupMenu(hPopMenu,TPM_LEFTALIGN|TPM_LEFTBUTTON|TPM_BOTTOMALIGN,
-            lpClickPoint.x, lpClickPoint.y, 0, hwnd, NULL);
-         break;
-
-      // case WM_RBUTTONUP:
-      //    // show window as response to right-clicking the tray icon
-      //    ShowWindow (hwnd, SW_SHOWNORMAL);
-      //    SetForegroundWindow (hwnd);
-      //    break;
+         AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
+         // AppendMenu(hPopMenu, MF_STRING, ID_NEXT_COLOR,    _T("Select next color"));
+         AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_LAYOUT,  _T("Toggle time format"));
+         AppendMenu(hPopMenu, MF_STRING, ID_TRAYOPEN,       _T("Open clock window"));
+         AppendMenu(hPopMenu, MF_STRING, ID_MINIMIZE,       _T("Minimize window"));
+         AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_WINMSGS, _T("Toggle Winmsgs"));
+         AppendMenu(hPopMenu, MF_STRING, ID_TRAYEXIT,       _T("Exit from program"));
+         // CheckMenuItem (hPopMenu, (UINT) menu_handles[bitmap_idx], MF_CHECKED);
+#ifdef  READY_FOR_BCLK_ELEMENTS
+         CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
+#endif            
       }
+
+      SetForegroundWindow(hwnd);
+      TrackPopupMenu(hPopMenu,TPM_LEFTALIGN|TPM_LEFTBUTTON|TPM_BOTTOMALIGN,
+         lpClickPoint.x, lpClickPoint.y, 0, hwnd, NULL);
+      break;
+
+   // case WM_RBUTTONUP:
+   //    // show window as response to right-clicking the tray icon
+   //    ShowWindow (hwnd, SW_SHOWNORMAL);
+   //    SetForegroundWindow (hwnd);
+   //    break;
+   }
    return true ;
 }
 

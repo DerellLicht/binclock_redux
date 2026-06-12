@@ -1,5 +1,5 @@
 //****************************************************************************
-//  Copyright (c) 2010-2025  Derell Licht
+//  Copyright (c) 2010-2026  Derell Licht
 //
 //****************************************************************************
 //  Interesting notes about this file:
@@ -55,11 +55,11 @@ BM_BALLS  BITMAP  DISCARDABLE     "balls.bmp"
 IDI_APPICON   ICON    bclock.ico
 
 //*******************************************************************
-IDD_MAIN_DIALOG DIALOGEX 400, 200, 300, 200
+IDD_MAIN_DIALOG DIALOGEX 400, 200, 150, 80
 // STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 STYLE DS_MODALFRAME | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "about_hlinks"
+CAPTION "BinClock binary clock"
 FONT 12, "Times New Roman"
 BEGIN
    LTEXT           "hours:",    IDS_HOURS,   20, 15, 30,  9, SS_NOTIFY
@@ -71,8 +71,8 @@ BEGIN
    LTEXT           "seconds:",  IDS_SECS,    20, 39, 30,  9, SS_NOTIFY
    CTEXT           " ",         IDC_SECS,    50, 39, 12,  9, SS_SUNKEN | SS_NOTIFY
    
-   PUSHBUTTON      "About",     IDB_ABOUT,   10, 60, 50, 12
-   PUSHBUTTON      "Close",     IDB_CLOSE,   70, 60, 50, 12
+   PUSHBUTTON      "About",     IDB_ABOUT,   10, 55, 53, 12
+   PUSHBUTTON      "Close",     IDB_CLOSE,   80, 55, 50, 12
 END
 
 //  normal method for displaying LEDs
@@ -83,17 +83,17 @@ END
 //*******************************************************************
 IDD_ABOUT DIALOG DISCARDABLE  550, 300, 200, 100
 // STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-CAPTION "About about_hlinks"
+CAPTION "BinClock binary clock"
 FONT 10, "Times New Roman"
 BEGIN
-    ICON            IDI_APPICON,                                  IDC_STATIC,    9, 14
-    LTEXT           "BinClock Binary Clock - rebuild",            IDC_STATIC,   36, 15,  60, 10
-    LTEXT           VerNum,                                       IDC_VERNUM,   98, 15,  50, 10
-    LTEXT           "Copyright (c) 2025",                         IDC_STATIC,   36, 29,  60, 10
-    LTEXT           "Derell Licht",                               IDC_STATIC,   98, 29, 100, 10
-    LTEXT           "http://derelllicht.42web.io/freeware.html",  IDC_WEBLINK,  36, 43, 140, 10
-    LTEXT           "https://github.com/DerellLicht/about_hlinks",IDC_WEBLINK2, 36, 57, 140, 10
-    DEFPUSHBUTTON   "Close",                                      IDOK,         36, 75, 100, 14
+    ICON            IDI_APPICON,                                    IDC_STATIC,     9, 14
+    LTEXT           "BinClock Binary Clock",                        IDC_STATIC,    36, 15,  72, 10
+    LTEXT           VerNum,                                         IDC_VERNUM,   109, 15,  50, 10
+    LTEXT           "Copyright (c) 2007-2026",                      IDC_STATIC,    36, 29,  76, 10
+    LTEXT           "Derell Licht",                                 IDC_STATIC,   113, 29,  40, 10
+    LTEXT           "http://derelllicht.42web.io/freeware.html",    IDC_WEBLINK,   36, 43, 140, 10
+    LTEXT           "https://github.com/DerellLicht/binclock_redux",IDC_WEBLINK2,  36, 55, 150, 10
+    DEFPUSHBUTTON   "Close",                                        IDOK,          36, 75, 100, 14
 END
 
 /////////////////////////////////////////////////////////////////////////////
@@ -118,14 +118,14 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "winagrams - Windows anagram program."
+            VALUE "Comments", "BinClock - Binary Clock program."
             VALUE "CompanyName", "Cathartes Aura"
-            VALUE "FileDescription", "winagrams - Windows anagram program"
+            VALUE "FileDescription", "BinClock - Binary Clock program"
             VALUE "FileVersion", VerNum
-            VALUE "InternalName", "winagrams"
-            VALUE "LegalCopyright", "Copyright � 2010-2023"
-            VALUE "OriginalFilename", "winagrams.exe"
-            VALUE "ProductName", "winagrams - Windows anagram program"
+            VALUE "InternalName", "BinClock"
+            VALUE "LegalCopyright", "Copyright � 2003-2026"
+            VALUE "OriginalFilename", "binclock.exe"
+            VALUE "ProductName", "BinClock - Binary Clock program"
             VALUE "ProductVersion", VerNum
         END
     END
