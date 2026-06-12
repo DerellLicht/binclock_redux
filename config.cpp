@@ -87,8 +87,9 @@ LRESULT read_config_file(void)
    TCHAR inpstr[128] ;
    uint uvalue ;
    LRESULT result = derive_filename_from_exec(ini_name, (TCHAR *) _T(".ini")) ;  //lint !e1773
-   if (result != 0)
+   if (result != 0) {
       return result;
+   }
 
    if (show_winmsgs) {
       syslog(_T("ini file: %s\n"), ini_name);
@@ -135,6 +136,7 @@ LRESULT read_config_file(void)
          syslog(_T("unknown: [%s]\n"), inpstr) ;
       }
    }
+   fclose(fd);
    return 0;
 }
 

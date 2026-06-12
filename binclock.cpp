@@ -80,6 +80,7 @@ unsigned layout_method = 0 ;
 unsigned crfg = RGB(128, 255, 0) ;
 unsigned crbg = RGB(128, 64, 0) ;
 
+
 //*******************************************************************
 static uint screen_width  = 0 ;
 static uint screen_height = 0 ;
@@ -137,6 +138,7 @@ static void set_window_position(HWND hwnd)
 //***********************************************************************
 #define  NUM_ELEMENTS   10
 static bclock_element *element_list[NUM_ELEMENTS] ;
+static unsigned elist_len = 0 ;  //  how many elements are *actually* in element_list[] ??
 
 //  <vector> cannot be used here, because adding elements to the vector
 //  requires copying the existing elements, which requires a public
@@ -282,7 +284,9 @@ static void load_bitmap_files(HWND hwnd)
    //*********************************************************
    //                 width         mask offset start_el
    be_temp = new bclock_element(g_hInst, (char *) NULL, 14, BE_DRAWN, 0,   0,     0);
-   menu_code = be_temp->add_menu_data(menu_code, "Bound Boxes") ;
+   //  clang-tidy warning - last value of menu_code is not used
+   // menu_code = 
+   be_temp->add_menu_data(menu_code, "Bound Boxes") ;
    static char * const drawn_colors[] = 
       { " ", "select this element", "change ON color", "change OFF color", 0 } ; 
    for (j=0; drawn_colors[j] != 0; j++) {
@@ -291,6 +295,8 @@ static void load_bitmap_files(HWND hwnd)
    }
    be_temp->set_element_attr(crfg, crbg) ;
    element_list[idx++] = be_temp ;
+   
+   elist_len = idx ;
 
    //  this is an insufficient test; the program may abort
    //  before we can get to this test, if overrun occurs...
@@ -451,7 +457,7 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
       //******************************************************
       //  first check for a hit among the block_elements
       //******************************************************
-      for (uint j=0; j<NUM_ELEMENTS; j++) {
+      for (uint j=0; j<elist_len; j++) {
          // if (element_list[j]->get_menu_id() == LOWORD (wParam)) {
          int temp_idx = element_list[j]->get_menu_id(LOWORD (wParam)) ;
          if (temp_idx >= 0) {
@@ -536,7 +542,7 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          AppendMenu(hPopMenu, MF_STRING, ID_UNUSED, _T("derelict's binary clock")) ;
          AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
 
-         for (uint j=0; j<NUM_ELEMENTS; j++) {
+         for (uint j=0; j<elist_len; j++) {
             // AppendMenu(hPopMenu, MF_STRING, 
             //       element_list[j]->get_menu_id(),
             //    _T(element_list[j]->get_menu_str())) ;
@@ -582,7 +588,7 @@ static bool do_close(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVO
 static bool do_destroy(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOID private_data)
 {
    // syslog("Main window WM_DESTROY\n") ;
-   for (uint j=0; j<NUM_ELEMENTS; j++) {
+   for (uint j=0; j<elist_len; j++) {
       delete element_list[j] ;
    }
 

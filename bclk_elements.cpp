@@ -340,7 +340,7 @@ int bclock_element::get_menu_id(unsigned menu_idx)
          // inireg.set_param("attr_off", (unsigned) attr_low) ;
          // save_cfg_file();
       } 
-      syslog("bclk: attr_high: %06X, attr_low: %06X\n", attr_high, attr_low);
+      // syslog("bclk: attr_high: %06X, attr_low: %06X\n", attr_high, attr_low);
       return -1;
    } 
    if (flags & BE_PAIRS) 
