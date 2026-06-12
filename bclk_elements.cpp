@@ -9,9 +9,8 @@
 //***********************************************************************
 
 #include <windows.h>
-// #include <string.h>
 
-#include "resource.h"
+// #include "resource.h"
 #include "common.h"
 #include "binclock.h"
 #include "bclk_elements.h"

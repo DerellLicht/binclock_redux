@@ -55,24 +55,24 @@ BM_BALLS  BITMAP  DISCARDABLE     "balls.bmp"
 IDI_APPICON   ICON    bclock.ico
 
 //*******************************************************************
-IDD_MAIN_DIALOG DIALOGEX 400, 200, 150, 80
+IDD_MAIN_DIALOG DIALOGEX 400, 200, 180, 80
 // STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 STYLE DS_MODALFRAME | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "BinClock binary clock"
-FONT 12, "Times New Roman"
+FONT 11, "Times New Roman"
 BEGIN
-   LTEXT           "hours:",    IDS_HOURS,   20, 15, 30,  9, SS_NOTIFY
-   CTEXT           " ",         IDC_HOURS,   50, 15, 12,  9, SS_SUNKEN | SS_NOTIFY
+   LTEXT           "hours:",    IDS_HOURS,   20, 17, 30,  9, SS_NOTIFY
+   CTEXT           " ",         IDC_HOURS,   50, 17, 12,  9, SS_SUNKEN | SS_NOTIFY
                                              
-   LTEXT           "minutes:",  IDS_MINS,    20, 27, 30,  9, SS_NOTIFY
-   CTEXT           " ",         IDC_MINS,    50, 27, 12,  9, SS_SUNKEN | SS_NOTIFY
+   LTEXT           "minutes:",  IDS_MINS,    20, 29, 30,  9, SS_NOTIFY
+   CTEXT           " ",         IDC_MINS,    50, 29, 12,  9, SS_SUNKEN | SS_NOTIFY
 
-   LTEXT           "seconds:",  IDS_SECS,    20, 39, 30,  9, SS_NOTIFY
-   CTEXT           " ",         IDC_SECS,    50, 39, 12,  9, SS_SUNKEN | SS_NOTIFY
+   LTEXT           "seconds:",  IDS_SECS,    20, 41, 30,  9, SS_NOTIFY
+   CTEXT           " ",         IDC_SECS,    50, 41, 12,  9, SS_SUNKEN | SS_NOTIFY
    
-   PUSHBUTTON      "About",     IDB_ABOUT,   10, 55, 53, 12
-   PUSHBUTTON      "Close",     IDB_CLOSE,   80, 55, 50, 12
+   PUSHBUTTON      "About",     IDB_ABOUT,   20, 60, 43, 10
+   PUSHBUTTON      "Close",     IDB_CLOSE,  100, 60, 50, 10
 END
 
 //  normal method for displaying LEDs

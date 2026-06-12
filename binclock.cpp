@@ -52,7 +52,7 @@ static UINT  timerID = 0 ;
 #define  FIELD_HEIGHT   20
 // #define  TEXT_HEIGHT    20
 // #define  BUTTON_HEIGHT  (FIELD_HEIGHT + 10)
-#define  NEXT_FIELD     (FIELD_HEIGHT + 4)
+#define  NEXT_FIELD     (FIELD_HEIGHT + 6)
 
 #define  START_ROW      10
 #define  BLANK_ROW      (START_ROW)
@@ -426,17 +426,17 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
          case ID_TOGGLE_WINMSGS:
             show_winmsgs = !show_winmsgs ;
             save_cfg_file();
-            syslog("winmsgs %s\n", (show_winmsgs) ? "enabled" : "disabled") ;
+            CheckMenuItem (hPopMenu, ID_TOGGLE_WINMSGS, (show_winmsgs) ? MF_CHECKED : MF_UNCHECKED);
             InvalidateRect (hwnd, NULL, TRUE) ;
             return true ;
 
-         case ID_MINIMIZE:
-            ShowWindow (hwnd, SW_HIDE);
-            return true ;
+         // case ID_MINIMIZE:
+         //    ShowWindow (hwnd, SW_HIDE);
+         //    return true ;
 
-         case ID_TRAYOPEN:
-            ShowWindow (hwnd, SW_SHOW);   // open dialog
-            return true ;
+         // case ID_TRAYOPEN:
+         //    ShowWindow (hwnd, SW_SHOW);   // open dialog
+         //    return true ;
 
          case ID_TRAYEXIT:
             PostMessageA(hwnd, WM_CLOSE, 0, 0);
@@ -484,8 +484,8 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
          // AppendMenu(hPopMenu, MF_STRING, ID_NEXT_COLOR,    _T("Select next color"));
          AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_LAYOUT,  _T("Toggle time format"));
-         AppendMenu(hPopMenu, MF_STRING, ID_TRAYOPEN,       _T("Open clock window"));
-         AppendMenu(hPopMenu, MF_STRING, ID_MINIMIZE,       _T("Minimize window"));
+         // AppendMenu(hPopMenu, MF_STRING, ID_TRAYOPEN,       _T("Open clock window"));
+         // AppendMenu(hPopMenu, MF_STRING, ID_MINIMIZE,       _T("Minimize window"));
          AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_WINMSGS, _T("Toggle Winmsgs"));
          AppendMenu(hPopMenu, MF_STRING, ID_TRAYEXIT,       _T("Exit from program"));
          // CheckMenuItem (hPopMenu, (UINT) menu_handles[bitmap_idx], MF_CHECKED);

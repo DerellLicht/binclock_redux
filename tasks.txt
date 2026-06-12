@@ -1,8 +1,8 @@
 Remaining tasks:
 
-> adjust screen spacing of LEDs
-
 > convert elements[] array into <vector>
+
+> 'small lamps' is not remembering its selected color across loads
 
 > bclk_elements class needs *major* refactoring, to reflect modern C++ aspects
 
