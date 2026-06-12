@@ -67,7 +67,6 @@ private:
    bclock_element &operator=(const bclock_element &src) ;
    bclock_element(const bclock_element&);
    
-   
 public:
    bclock_element(HINSTANCE g_hInst, char *name, unsigned width, unsigned be_flags, 
             int mask_index, unsigned off_index, unsigned start_element);
@@ -95,8 +94,9 @@ public:
    unsigned next_led_color(void) ;
    void add_color_menu_str(unsigned menu_idx, char *mstr) ;
    void add_skip_element(unsigned idx) {
-      if (idx < num_elements) 
+      if (idx < num_elements) {
          skip_elements[idx] = 1 ;
+      } 
    } ;
    HMENU get_menu_handle(void) { return menu_hdl; } ;
    HMENU build_options_menu(void);

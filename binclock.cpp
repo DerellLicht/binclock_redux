@@ -12,11 +12,10 @@
 static char szClassName[] = "binclock" ;
 
 #include <windows.h>
-#ifdef USE_VECTOR_CLASS
+#ifdef  USE_VECTOR_CLASS
 #include <vector>
 #endif
 #include <commctrl.h>           //  link to comctl32.lib
-// #include <string.h>
 #include <math.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -139,6 +138,15 @@ static void set_window_position(HWND hwnd)
 #define  NUM_ELEMENTS   10
 static bclock_element *element_list[NUM_ELEMENTS] ;
 
+//  <vector> cannot be used here, because adding elements to the vector
+//  requires copying the existing elements, which requires a public
+//  copy constructor.  Much more data available here:
+// https://www.reddit.com/r/cpp_questions/comments/1u47huj/next_step_in_converting_c_arrays_to_vector/
+
+// std::vector<bclock_element> element_listv ;
+
+// static bclock_element *element = NULL ;
+
 //*********************************************************************
 static void load_bitmap_files(HWND hwnd)
 {
@@ -155,6 +163,12 @@ static void load_bitmap_files(HWND hwnd)
    //          int mask_index, unsigned off_index, unsigned start_element);
    start_element = (bitmap_idx == idx) ? bit_menu : 10 ;
    be_temp = new bclock_element(g_hInst, "ledarray.bmp", 22, BE_LINEAR, 3, 4, start_element);
+   
+   // char *ledname = "ledarray.bmp" ;
+   // element_listv.emplace_back(g_hInst, ledname, 22, BE_LINEAR, 3, 4, start_element);
+   // idx = element_listv.size() - 1 ;
+   // be_temp = &element_listv[idx] ;
+   
    be_temp->add_skip_element(0) ;
    be_temp->add_skip_element(1) ;
    be_temp->add_color_menu_str(2, "green") ;

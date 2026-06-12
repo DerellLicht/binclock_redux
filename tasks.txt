@@ -1,7 +1,5 @@
 Remaining tasks:
 
-> convert elements[] array into <vector>
-
 > sub-menus still are not getting checked
 
 > bclk_elements class needs *major* refactoring, to reflect modern C++ aspects
