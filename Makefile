@@ -29,7 +29,7 @@ CFLAGS=-Wall -O3
 LFLAGS=-s -mwindows
 endif
 CFLAGS += -Wno-write-strings
-# CFLAGS += -Weffc++
+CFLAGS += -Weffc++
 CFLAGS += -Ider_libs
 LiFLAGS += -Ider_libs
 
@@ -57,7 +57,7 @@ clean:
 
 dist:
 	rm -f *.zip
-	zip $(BIN).zip $(BIN).exe readme.md LICENSE
+	zip $(BIN).zip $(BIN).exe *.bmp readme.md LICENSE
 
 wc:
 	wc -l $(CSRC) *.rc
