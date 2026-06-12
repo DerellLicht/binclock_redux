@@ -1,6 +1,7 @@
 //**********************************************************************
 //  Copyright (c) 2009-2026  Derell Licht
-//  about_hlinks - example program - About dialog with hyperlinks
+//  BinClock redux - re-factoring my ancient BinClock utility,
+//  with modern development techniques.
 //**********************************************************************
 
 //  This conversion from C array to <vector> class,
