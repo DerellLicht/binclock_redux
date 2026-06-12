@@ -5,3 +5,5 @@ Remaining tasks:
 2. run lint and check
 
 3. convert elements[] array into <vector>
+
+4. Add support for -Weffc++
