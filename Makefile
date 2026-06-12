@@ -33,6 +33,8 @@ CFLAGS += -Wno-write-strings
 CFLAGS += -Ider_libs
 LiFLAGS += -Ider_libs
 
+LINTFILES=lintdefs.cpp lintdefs.ref.h 
+
 BIN=binclock
 BINX=$(BIN).exe
 
@@ -40,7 +42,6 @@ BINX=$(BIN).exe
 CSRC=$(BIN).cpp about.cpp bclk_elements.cpp config.cpp \
 der_libs/hyperlinks.cpp \
 der_libs/common_funcs.cpp \
-der_libs/common_win.cpp \
 der_libs/winmsgs.cpp
 
 OBJS = $(CSRC:.cpp=.o) rc.o
@@ -62,7 +63,7 @@ wc:
 	wc -l $(CSRC) *.rc
 
 lint:
-	cmd /C "c:\lint9\lint-nt +v -width(160,4) -ic:\lint9 -ider_libs mingw.lnt -os(_lint.tmp) lintdefs.cpp $(CSRC)"
+	cmd /C "c:\lint9\lint-nt +v -width(160,4) $(LiFLAGS) -ic:\lint9 mingw.lnt -os(_lint.tmp) $(LINTFILES) $(CSRC)"
 
 depend:
 	makedepend $(CFLAGS) $(CSRC)

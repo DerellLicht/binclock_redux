@@ -24,6 +24,7 @@ static char szClassName[] = "binclock" ;
 #define  READY_FOR_BCLK_ELEMENTS
 // #undef  READY_FOR_BCLK_ELEMENTS
 
+//lint -esym(528, do_command, do_close, do_timer, do_destroy, do_user, do_init_dialog, winproc_table)
 //lint -esym(715, hwnd, private_data, message, wParam, lParam)
 
 #include "version.h"
@@ -34,10 +35,10 @@ static char szClassName[] = "binclock" ;
 
 //*************************************************************************
 
-UINT  timerID = 0 ;
-
-HINSTANCE g_hInst;
+static HINSTANCE g_hInst;
 static NOTIFYICONDATA NotifyIconData;
+
+static UINT  timerID = 0 ;
 
 //*************************************
 #define  STD_SPACE      20
@@ -48,7 +49,7 @@ static NOTIFYICONDATA NotifyIconData;
 #define  SPRITE_WIDTH   22
 
 #define  FIELD_HEIGHT   20
-#define  TEXT_HEIGHT    20
+// #define  TEXT_HEIGHT    20
 // #define  BUTTON_HEIGHT  (FIELD_HEIGHT + 10)
 #define  NEXT_FIELD     (FIELD_HEIGHT + 4)
 
@@ -57,7 +58,7 @@ static NOTIFYICONDATA NotifyIconData;
 #define  HOURS_ROW      (BLANK_ROW + NEXT_FIELD)
 #define  MINS_ROW       (HOURS_ROW + NEXT_FIELD)
 #define  SECS_ROW       (MINS_ROW + NEXT_FIELD)
-#define  BTN_ROW        (SECS_ROW + NEXT_FIELD + 10)
+// #define  BTN_ROW        (SECS_ROW + NEXT_FIELD + 10)
 
 #define  LABEL_COL      STD_SPACE
 
@@ -71,7 +72,7 @@ static HWND hwndHours = NULL;
 static HWND hwndMins  = NULL;
 static HWND hwndSecs  = NULL;
 
-HMENU hPopMenu = 0 ;
+static HMENU hPopMenu = 0 ;
 
 //***********************************************************************
 unsigned bitmap_idx = 2 ;
@@ -230,7 +231,8 @@ static void load_bitmap_files(HWND hwnd)
 
    //  this is an insufficient test; the program may abort
    //  before we can get to this test, if overrun occurs...
-   if (idx > NUM_ELEMENTS) {
+   //  That's okay, though... converting this array to <vector> will solve this problem.
+   if (idx > NUM_ELEMENTS) {  //lint !e774
       wsprintf(msg, "too many elements created (%u vs %u)\n", idx, NUM_ELEMENTS) ;
       OutputDebugString(msg) ;
       MessageBox(NULL, msg, "DANGER!!", MB_OK) ;
@@ -268,7 +270,7 @@ static void draw_bcd_time(HDC hdc, unsigned row, unsigned time_seg, unsigned dra
 }
 #endif
 //*********************************************************************
-void update_timer_count(HWND hwnd)
+static void update_timer_count(HWND hwnd)
 {
    time_t ttm ;
    struct tm *gtm ;
@@ -501,7 +503,7 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
    //    ShowWindow (hwnd, SW_SHOWNORMAL);
    //    SetForegroundWindow (hwnd);
    //    break;
-   }
+   }  //lint !e744
    return true ;
 }
 
@@ -555,7 +557,9 @@ winproc_table_s::winproc_table_s (
 //  This conversion from C array to <vector> class,
 //  change executable size from 32KB to 144KB
 #ifdef USE_VECTOR_CLASS
-static std::vector<winproc_table_s> winproc_table = {
+//lint -esym(752, winproc_table)
+//lint -esym(1714, winproc_table_s::winproc_table_s)
+static std::vector<winproc_table_s> const winproc_table = {
 #else
 static winproc_table_s const winproc_table[] = {
 #endif
@@ -590,13 +594,16 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 #endif   
    
    return false;
-}  //lint !e715
+}  //lint !e715 !e533
 
 //*********************************************************************
 int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
    LPSTR lpszArgument, int nFunsterStil)
 {
    g_hInst = hInstance;
+   load_exec_filename() ;     //  get our executable name
+   read_config_file() ;
+   
    //  create the main application
    HWND hwnd = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_MAIN_DIALOG), NULL, (DLGPROC) WndProc);
    if (hwnd == NULL) {

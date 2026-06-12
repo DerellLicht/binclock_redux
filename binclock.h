@@ -1,4 +1,4 @@
-extern HINSTANCE g_hInst ;
+// extern HINSTANCE g_hInst ;
 
 #define  WM_DO_COMM_TASK    (WM_USER + 101)
 #define  WM_COMM_TASK_DONE  (WM_USER + 102)

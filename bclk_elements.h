@@ -71,8 +71,10 @@ public:
    void set_image_offsets(int dx, int dy) ;
    void mask_the_source(HDC hdc) ;
    void draw_sprite(HDC hdc, unsigned on_noff, unsigned xidest, unsigned yidest);
-   unsigned get_on_color(void) { return curr_element ; } ;
-   unsigned get_off_color(void) { return off_idx ; } ;
+   unsigned get_on_color(void) const 
+      { return curr_element ; } ;
+   unsigned get_off_color(void) const 
+      { return off_idx ; } ;
    unsigned next_led_color(void) ;
    void add_color_menu_str(unsigned menu_idx, char *mstr) ;
    void add_skip_element(unsigned idx) {

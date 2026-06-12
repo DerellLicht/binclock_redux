@@ -9,13 +9,15 @@
 //***********************************************************************
 
 #include <windows.h>
-#include <string.h>
+// #include <string.h>
 
+#include "resource.h"
 #include "common.h"
 #include "binclock.h"
 #include "bclk_elements.h"
-// #include "regif.h"
-// extern registry_iface inireg ;
+
+//lint -esym(1714, bclock_element::bclock_element, bclock_element::get_on_color)
+//lint -esym(1714, bclock_element::get_off_color, bclock_element::next_led_color)
 
 static unsigned be_object_num = 0 ;
 
@@ -349,8 +351,6 @@ void bclock_element::mask_the_source(HDC hdc)
 }
 
 //******************************************************************
-#define  IDC_STATIC        1020
-
 HMENU bclock_element::build_options_menu(void)
 {
    unsigned j ;

@@ -36,11 +36,6 @@ bool show_winmsgs = false ;
 //****************************************************************************
 static TCHAR ini_name[MAX_PATH_LEN+1] = _T("") ;
 
-uint x_pos = 0 ;
-uint y_pos = 200 ;
-uint tbar_on = 0 ;
-// uint ip_iface_idx = 0 ;  //  0 means read all, otherwise read selected iface
-
 //****************************************************************************
 static void strip_comments(TCHAR *bfr)
 {
@@ -64,7 +59,7 @@ static LRESULT save_default_ini_file(void)
    _ftprintf(fd, _T("attr_on=%u\n"), crfg) ;
    _ftprintf(fd, _T("attr_off=%u\n"), crbg) ;
    _ftprintf(fd, _T("layout=%u\n"), layout_method) ;
-   _ftprintf(fd, _T("winmsgs=%u\n"), (show_winmsgs) ? 1 : 0) ;
+   _ftprintf(fd, _T("winmsgs=%u\n"), (show_winmsgs) ? 1U : 0U) ;
    // _ftprintf(fd, _T("ip_iface=%u\n"), ip_iface_idx) ;
    fclose(fd) ;
    return ERROR_SUCCESS;
@@ -87,7 +82,7 @@ LRESULT read_config_file(void)
 {
    TCHAR inpstr[128] ;
    uint uvalue ;
-   LRESULT result = derive_filename_from_exec(ini_name, (TCHAR *) _T(".ini")) ;
+   LRESULT result = derive_filename_from_exec(ini_name, (TCHAR *) _T(".ini")) ;  //lint !e1773
    if (result != 0)
       return result;
 
