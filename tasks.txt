@@ -2,11 +2,19 @@ Remaining tasks:
 
 > convert elements[] array into <vector>
 
-> 'small lamps' is not remembering its selected color across loads
+> sub-menus still are not getting checked
 
 > bclk_elements class needs *major* refactoring, to reflect modern C++ aspects
 
 > Add support for -Weffc++
 
 > run lint and check
+
+> drawn-blocks option has multiple issues:
+  fgnd/bgnd colors are stored globally in parent app,
+  to support storage in config file.
+  However, color changes are handled by functions in the bclk_elements class.
+  Communicating changes in these colors, between the two layers,
+  is not working well (or at all) at this point.
+  
 

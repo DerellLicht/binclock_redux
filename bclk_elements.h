@@ -51,6 +51,10 @@ private:
    // In the meantime, I should let user select attr_high/low.
    COLORREF attr_high ;
    COLORREF attr_low  ;
+   
+   //  these fields are used by external config manager
+   //  just export these as const variables
+   unsigned bit_menu ;
 
    //  internal functions
    char *get_system_message(void);
@@ -75,6 +79,14 @@ public:
       { return curr_element ; } ;
    unsigned get_off_color(void) const 
       { return off_idx ; } ;
+   unsigned get_bit_menu(void) const 
+      { return bit_menu ; } ;
+   unsigned get_attr_high(void) const 
+      { return attr_high ; } ;
+   unsigned get_attr_low(void) const 
+      { return attr_low ; } ;
+   unsigned get_flags(void) const 
+      { return flags ; } ;
    unsigned next_led_color(void) ;
    void add_color_menu_str(unsigned menu_idx, char *mstr) ;
    void add_skip_element(unsigned idx) {

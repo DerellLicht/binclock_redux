@@ -12,7 +12,7 @@
 
 // #include "resource.h"
 #include "common.h"
-#include "binclock.h"
+// #include "binclock.h"
 #include "bclk_elements.h"
 
 //lint -esym(1714, bclock_element::bclock_element, bclock_element::get_on_color)
@@ -295,23 +295,22 @@ int bclock_element::get_menu_id(unsigned menu_idx)
       if (curr_element == 2) {   //  set foreground color
          attr_high = select_color(attr_high) ;
          // inireg.set_param("attr_on", (unsigned) attr_high) ;
-         save_cfg_file();
+         // save_cfg_file();
       } else
       if (curr_element == 3) {   //  set background color
          attr_low = select_color(attr_low) ;
          // inireg.set_param("attr_off", (unsigned) attr_low) ;
-         save_cfg_file();
+         // save_cfg_file();
       } 
-//       wsprintf(errstr, "curr_element=%u (mi=%u, mc=%u)\n", curr_element, menu_idx, menu_code) ;
-//       OutputDebugString(errstr) ;
-//       inireg.set_param("bit_menu", (unsigned) curr_element) ;
+      syslog("bclk: attr_high: %06X, attr_low: %06X\n", attr_high, attr_low);
       return -1;
    } 
    if (flags & BE_PAIRS) 
       off_idx = curr_element - 1 ;
    //  this needs to store the actual index into the array...
    // inireg.set_param("bit_menu", (unsigned) curr_element) ;
-   save_cfg_file();
+   bit_menu = curr_element ;
+   // save_cfg_file();  //  this needs to set bit_menu in external code!!
    return object_code ;
 }
 

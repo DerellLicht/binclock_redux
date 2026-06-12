@@ -1,4 +1,6 @@
 //  config.cpp
+extern uint x_pos ;
+extern uint y_pos ;
 extern unsigned bitmap_idx ;
 extern unsigned bit_menu ;
 extern unsigned layout_method ;

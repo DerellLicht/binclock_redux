@@ -33,6 +33,8 @@
 
 bool show_winmsgs = false ;
 
+uint x_pos = 0 ;
+uint y_pos = 200 ;
 //****************************************************************************
 static TCHAR ini_name[MAX_PATH_LEN+1] = _T("") ;
 
@@ -58,6 +60,8 @@ static LRESULT save_default_ini_file(void)
    _ftprintf(fd, _T("bit_menu=%u\n"), bit_menu) ;
    _ftprintf(fd, _T("attr_on=%u\n"), crfg) ;
    _ftprintf(fd, _T("attr_off=%u\n"), crbg) ;
+   _ftprintf(fd, _T("x_pos=%u\n"), x_pos) ;
+   _ftprintf(fd, _T("y_pos=%u\n"), y_pos) ;
    _ftprintf(fd, _T("layout=%u\n"), layout_method) ;
    _ftprintf(fd, _T("winmsgs=%u\n"), (show_winmsgs) ? 1U : 0U) ;
    // _ftprintf(fd, _T("ip_iface=%u\n"), ip_iface_idx) ;
@@ -100,6 +104,13 @@ LRESULT read_config_file(void)
       if (_tcslen(inpstr) == 0)
          continue;
 
+      if (_tcsncmp(inpstr, _T("x_pos="), 6) == 0) {
+         // syslog("enabling factory mode\n") ;
+         x_pos = (uint) _tcstoul(&inpstr[6], 0, 0) ;
+      } else
+      if (_tcsncmp(inpstr, _T("y_pos="), 6) == 0) {
+         y_pos = (uint) _tcstoul(&inpstr[6], 0, 0) ;
+      } else
       if (_tcsncmp(inpstr, _T("bitmap_idx="), 11) == 0) {
          // syslog("enabling factory mode\n") ;
          bitmap_idx = (uint) _tcstoul(&inpstr[11], 0, 0) ;

@@ -25,7 +25,7 @@ static char szClassName[] = "binclock" ;
 #define  READY_FOR_BCLK_ELEMENTS
 // #undef  READY_FOR_BCLK_ELEMENTS
 
-//lint -esym(528, do_command, do_close, do_timer, do_destroy, do_user, do_init_dialog, winproc_table)
+//lint -esym(528, do_command, do_close, do_timer, do_destroy, do_user, do_init_dialog, do_sizemove, winproc_table)
 //lint -esym(715, hwnd, private_data, message, wParam, lParam)
 
 #include "version.h"
@@ -89,6 +89,71 @@ unsigned crbg = RGB(128, 64, 0) ;
 #define  NUM_ELEMENTS   10
 static bclock_element *element_list[NUM_ELEMENTS] ;
 #endif
+
+//*******************************************************************
+static uint screen_width  = 0 ;
+static uint screen_height = 0 ;
+
+static void get_monitor_dimens(HWND hwnd)
+{
+   HMONITOR currentMonitor;      // Handle to monitor where fullscreen should go
+   MONITORINFO mi;               // Info of that monitor
+   currentMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+   mi.cbSize = sizeof(MONITORINFO);
+   if (GetMonitorInfo(currentMonitor, &mi) != FALSE) {
+      screen_width  = mi.rcMonitor.right  - mi.rcMonitor.left ;
+      screen_height = mi.rcMonitor.bottom - mi.rcMonitor.top ;
+   }
+}
+
+//*******************************************************************
+//  if current dialog position is offscreen, move it safely onscreen.
+//  The actual move will be done later by set_window_position()
+//  
+//  players: x_pos, y_pos, hwndMainDialog 
+//*******************************************************************
+static void verify_screen_position(void)
+{
+   if (x_pos > screen_width  ||  y_pos > screen_height) {
+      x_pos = 0 ;
+      y_pos = screen_height - 100 ;
+   }
+}
+
+//*******************************************************************
+static void save_window_position(HWND hwnd)
+{
+   RECT rect ;
+   GetWindowRect(hwnd, &rect) ;
+   x_pos = rect.left ;
+   y_pos = rect.top ;
+   save_cfg_file() ;
+}
+
+//*******************************************************************
+//  used *only* in WM_INITDIALOG
+//*******************************************************************
+static void set_window_position(HWND hwnd)
+{
+   RECT rect ;
+   GetWindowRect(hwnd, &rect) ;
+   uint dy = rect.bottom - rect.top ;
+   uint dx = rect.right - rect.left ;
+   // uint caption_cy = (uint) GetSystemMetrics(SM_CYSMCAPTION) ;
+
+   // if (tbar_on) {
+      SetWindowPos(hwnd, NULL, x_pos, y_pos, dx, dy, SWP_NOZORDER | SWP_DRAWFRAME );
+   // } else {
+   //    //  well, this sequence is not very efficient, but it works,
+   //    //  and it's only run once when program is started...
+   //    SetWindowPos(hwnd, NULL, x_pos, y_pos, dx, dy, SWP_NOZORDER | SWP_DRAWFRAME );
+   //    toggle_title_bar(hwnd);
+   //    y_pos -= caption_cy ;
+   //    SetWindowPos( hwnd, NULL, x_pos, y_pos, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME );
+   // }
+
+   save_cfg_file() ;
+}
 
 //*********************************************************************
 static void load_bitmap_files(HWND hwnd)
@@ -333,6 +398,10 @@ static bool do_init_dialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
    SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM) LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_APPICON)));
    SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM) LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_APPICON)));
 
+   get_monitor_dimens(hwnd);
+   verify_screen_position() ;
+   set_window_position(hwnd) ;
+   
 #ifdef  READY_FOR_BCLK_ELEMENTS
    load_bitmap_files(hwnd) ;
 #endif   
@@ -395,6 +464,12 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
          // if (element_list[j]->get_menu_id() == LOWORD (wParam)) {
          int temp_idx = element_list[j]->get_menu_id(LOWORD (wParam)) ;
          if (temp_idx >= 0) {
+            bit_menu = element_list[j]->get_bit_menu();
+            if (element_list[j]->get_flags() & BE_DRAWN) {
+               crfg = element_list[j]->get_attr_high();
+               crbg = element_list[j]->get_attr_low();
+            }
+            
             // bitmap_idx = LOWORD (wParam) - ID_LAMPS0;
             CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_UNCHECKED);
             bitmap_idx = (unsigned) temp_idx ;
@@ -509,6 +584,13 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
 }
 
 //*******************************************************************
+static bool do_sizemove(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOID private_data)
+{
+   save_window_position(hwnd) ;
+   return true;
+}
+      
+//*******************************************************************
 static bool do_close(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOID private_data)
 {
    DestroyWindow(hwnd);
@@ -568,6 +650,7 @@ static winproc_table_s const winproc_table[] = {
 { WM_TIMER,          do_timer },
 { WM_COMMAND,        do_command },
 { WM_USER,           do_user },
+{ WM_EXITSIZEMOVE,   do_sizemove },
 { WM_CLOSE,          do_close },
 { WM_DESTROY,        do_destroy }
 #ifndef USE_VECTOR_CLASS
