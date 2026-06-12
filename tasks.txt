@@ -1,0 +1,5 @@
+Remaining tasks:
+
+1. adjust screen spacing of LEDs
+
+2. run lint and check

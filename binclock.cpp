@@ -435,7 +435,7 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
             return true ;
 
          case ID_TRAYEXIT:
-            DestroyWindow (hwnd);
+            PostMessageA(hwnd, WM_CLOSE, 0, 0);
             return true ;
 
       case IDB_ABOUT:
@@ -443,7 +443,7 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
          return true;
 
       case IDB_CLOSE:
-         PostMessageA(hwnd, WM_CLOSE, 0, 0);
+         DestroyWindow (hwnd);
          return true;
       }  //lint !e744
    } 
@@ -514,6 +514,18 @@ static bool do_close(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVO
 //*******************************************************************
 static bool do_destroy(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOID private_data)
 {
+   // syslog("Main window WM_DESTROY\n") ;
+   for (uint j=0; j<NUM_ELEMENTS; j++) {
+      delete element_list[j] ;
+   }
+
+   if (timerID != 0) {
+      KillTimer(hwnd, timerID) ;
+      timerID = 0 ;
+   }
+   // remove the icon from a system tray and free .dll handle
+   Shell_NotifyIcon (NIM_DELETE, &NotifyIconData);
+
    PostQuitMessage(0);
    return true ;
 }
