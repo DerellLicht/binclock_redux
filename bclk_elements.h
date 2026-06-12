@@ -57,7 +57,7 @@ private:
    unsigned bit_menu ;
 
    //  internal functions
-   char *get_system_message(void);
+   char *get_system_message(void) const ;
    COLORREF select_color(COLORREF init_attr);
    void Box(HDC hdc, int x0, int y0, int x1, int y1, unsigned style, COLORREF fgattr, COLORREF bgattr);
    void Solid_Rect(HDC hdc, int xl, int yu, int xr, int yl, COLORREF Color);

@@ -10,18 +10,18 @@
 
 #include <windows.h>
 
-// #include "resource.h"
 #include "common.h"
-// #include "binclock.h"
 #include "bclk_elements.h"
 
 //lint -esym(1714, bclock_element::bclock_element, bclock_element::get_on_color)
 //lint -esym(1714, bclock_element::get_off_color, bclock_element::next_led_color)
 
+//lint -esym(1762, bclock_element::Box, bclock_element::Solid_Rect, bclock_element::select_color)
+
 static unsigned be_object_num = 0 ;
 
 //***********************************************************************
-char *bclock_element::get_system_message(void)
+char *bclock_element::get_system_message(void) const
 {
    static char msg[261] ;
    int slen ;
@@ -95,7 +95,8 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    hSpriteBitmap(0),
    menu_hdl(0),
    menu_code(0),
-   object_code(0),
+   // object_code(0),
+   object_code(be_object_num++),
    color_menu_str(NULL),
    menu_str(""),
    errstr(""),
@@ -106,15 +107,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    bit_menu(0)
 {
    BITMAP bm;
-   // el_width = width ;
-   // flags = be_flags ;
-   // mask_idx = mask_index ;
-   // off_idx = off_index ;
-   // x_offset = 0 ;
-   // y_offset = 0 ;
-   // curr_element = start_element ;
-   object_code = be_object_num++ ;
-   // menu_hdl = 0 ;
+   // object_code = be_object_num++ ;
 
    //  if no filename provided, assume BE_DRAWN format
    if (name == 0) {
@@ -150,7 +143,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
       el_height = bm.bmHeight ;
       if (el_width == 0) 
          el_width = bm.bmHeight ;
-      num_elements = bm.bmWidth / el_width ;
+      num_elements = (unsigned) bm.bmWidth / el_width ;
    }
 
    // wsprintf(errstr, "%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
@@ -167,9 +160,12 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    skip_elements = new u8[num_elements] ;
    ZeroMemory(skip_elements, num_elements) ;
 
-   skip_elements[off_idx] = 1 ;
-   if (mask_idx >= 0)
-      skip_elements[mask_idx] = 1 ;
+   if (off_idx < num_elements) {
+      skip_elements[off_idx] = 1 ;
+   }
+   if (mask_idx >= 0  &&  (unsigned) mask_idx < num_elements) {
+      skip_elements[mask_idx] = 1 ; //lint !e661 !e662
+   }
 }
 
 //***********************************************************************
@@ -200,15 +196,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
    bit_menu(0)
 {
    BITMAP bm;
-   // flags = be_flags ;
-   // el_width = width ;
-   // mask_idx = mask_index ;
-   // curr_element = start_element ;
-   // off_idx = off_index ;
-   // x_offset = 0 ;
-   // y_offset = 0 ;
    object_code = be_object_num++ ;
-   // menu_hdl = 0 ;
 
    bm_name[0] = 0 ;
    hSpriteBitmap = (HBITMAP) LoadImage (g_hInst, MAKEINTRESOURCE(bm_resource), 
@@ -225,7 +213,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
    el_height = bm.bmHeight ;
    if (el_width == 0) 
       el_width = bm.bmHeight ;
-   num_elements = bm.bmWidth / el_width ;
+   num_elements = (unsigned) bm.bmWidth / el_width ;
 
    // wsprintf(errstr, "%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
    // OutputDebugString(errstr) ;
@@ -247,6 +235,10 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
 }
 
 //***********************************************************************
+// pointer member not directly freed or zeroed by destructor
+//lint -esym(1740, bclock_element::skip_elements, bclock_element::hSpriteBitmap)
+//lint -esym(1740, bclock_element::menu_hdl, bclock_element::color_menu_str)
+
 bclock_element::~bclock_element()
 {
    DeleteObject ((HGDIOBJ) hSpriteBitmap);
@@ -363,7 +355,7 @@ int bclock_element::get_menu_id(unsigned menu_idx)
 //******************************************************************
 char *bclock_element::get_menu_str(void) 
 {
-   return menu_str;
+   return menu_str;  //lint !e1536  Exposing low access member 'bclock_element::menu_str'
 }
 
 //******************************************************************
@@ -373,7 +365,7 @@ void bclock_element::mask_the_source(HDC hdc)
 {
    if (mask_idx < 0)
       return ;
-   unsigned xmask  = mask_idx * el_width  ;
+   unsigned xmask  = (unsigned) mask_idx * el_width  ;
 
    HDC hdcMem = CreateCompatibleDC (hdc);
    SelectObject (hdcMem, (HGDIOBJ) hSpriteBitmap);
@@ -421,17 +413,6 @@ void bclock_element::Box(HDC hdc, int x0, int y0, int x1, int y1, unsigned style
    HPEN hPen = 0 ;
 
    switch (style) {
-   case BX_SOLID:
-      hPen = CreatePen(PS_SOLID, 1, fgattr) ;
-      SelectObject(hdc, hPen) ;
-
-      MoveToEx(hdc, x0, y0, NULL) ;
-      LineTo  (hdc, x1, y0) ;
-      LineTo  (hdc, x1, y1) ;
-      LineTo  (hdc, x0, y1) ;
-      LineTo  (hdc, x0, y0) ;
-      break;
-
    case BX_SHADOW_OUTER:
       hPen = CreatePen(PS_SOLID, 1, fgattr) ;
       SelectObject(hdc, hPen) ;
@@ -462,6 +443,18 @@ void bclock_element::Box(HDC hdc, int x0, int y0, int x1, int y1, unsigned style
       LineTo  (hdc, x1, y1) ;
       LineTo  (hdc, x0, y1) ;
       SetPixel(hdc, x0, y1, fgattr) ;
+      break;
+
+   case BX_SOLID:
+   default:
+      hPen = CreatePen(PS_SOLID, 1, fgattr) ;
+      SelectObject(hdc, hPen) ;
+
+      MoveToEx(hdc, x0, y0, NULL) ;
+      LineTo  (hdc, x1, y0) ;
+      LineTo  (hdc, x1, y1) ;
+      LineTo  (hdc, x0, y1) ;
+      LineTo  (hdc, x0, y0) ;
       break;
 
    }
@@ -548,7 +541,7 @@ void bclock_element::draw_sprite(HDC hdc, unsigned on_noff, unsigned xidest, uns
        }
    }
    else {
-      xmask  = mask_idx * el_width  ;
+      xmask  = (unsigned) mask_idx * el_width  ;
       if (!BitBlt (hdc, xdest, ydest, el_width, el_height, hdcMem, xmask, 0, SRCAND)) {
          // Statusbar_ShowMessage (get_system_message());
          wsprintf(errstr, "BitBlt (mask): %s", get_system_message()) ;
