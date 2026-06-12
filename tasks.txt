@@ -4,10 +4,7 @@ Remaining tasks:
 
 > bclk_elements class needs *major* refactoring, to reflect modern C++ aspects
 
-> run lint and check
-
-> drawn-blocks option has multiple issues:
-  fgnd/bgnd colors are stored globally in parent app,
+> fgnd/bgnd colors are stored globally in parent app,
   to support storage in config file.
   However, color changes are handled by functions in the bclk_elements class.
   Communicating changes in these colors, between the two layers,
