@@ -343,8 +343,9 @@ int bclock_element::get_menu_id(unsigned menu_idx)
       // syslog("bclk: attr_high: %06X, attr_low: %06X\n", attr_high, attr_low);
       return -1;
    } 
-   if (flags & BE_PAIRS) 
+   if (flags & BE_PAIRS) {
       off_idx = curr_element - 1 ;
+   }
    //  this needs to store the actual index into the array...
    // inireg.set_param("bit_menu", (unsigned) curr_element) ;
    bit_menu = curr_element ;

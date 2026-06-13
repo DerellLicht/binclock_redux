@@ -2,9 +2,8 @@ Remaining tasks:
 
 > sub-menus still are not getting checked
 
-> bclk_elements class needs *major* refactoring, to reflect modern C++ aspects
-
-> fgnd/bgnd colors are stored globally in parent app,
+> Bound Boxes LED style does not save/restore changed colors
+  fgnd/bgnd colors are stored globally in parent app,
   to support storage in config file.
   However, color changes are handled by functions in the bclk_elements class.
   Communicating changes in these colors, between the two layers,
