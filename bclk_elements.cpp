@@ -131,13 +131,11 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
       hSpriteBitmap = (HBITMAP) LoadImage (g_hInst, bm_name, 
          IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
       if (hSpriteBitmap == NULL) {
-         wsprintf(errstr, "%s: LoadImage: %s\n", bm_name, get_system_message()) ;
-         OutputDebugString(errstr) ;
+         syslog("%s: LoadImage: %s\n", bm_name, get_system_message()) ;
       }
 
       if (GetObject ((HGDIOBJ) hSpriteBitmap, sizeof (BITMAP), &bm) == 0) {
-         wsprintf(errstr, "%s: GetObject: %s\n", bm_name, get_system_message()) ;
-         OutputDebugString(errstr) ;
+         syslog("%s: GetObject: %s\n", bm_name, get_system_message()) ;
       }
       el_height = bm.bmHeight ;
       if (el_width == 0) 
@@ -184,7 +182,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
    curr_element(start_element),
    hSpriteBitmap(0),
    menu_hdl(0),
-   object_code(0),
+   object_code(be_object_num++),
    color_menu_str(NULL),
    menu_str(""),
    errstr(""),
@@ -194,27 +192,23 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
    attr_low(0)
 {
    BITMAP bm;
-   object_code = be_object_num++ ;
 
    bm_name[0] = 0 ;
    hSpriteBitmap = (HBITMAP) LoadImage (g_hInst, MAKEINTRESOURCE(bm_resource), 
       IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
    if (hSpriteBitmap == NULL) {
-      wsprintf(errstr, "%s: LoadImage: %s\n", bm_name, get_system_message()) ;
-      OutputDebugString(errstr) ;
+      syslog("%s: LoadImage: %s\n", bm_name, get_system_message()) ;
    }
 
    if (GetObject ((HGDIOBJ) hSpriteBitmap, sizeof (BITMAP), &bm) == 0) {
-      wsprintf(errstr, "%s: GetObject: %s\n", bm_name, get_system_message()) ;
-      OutputDebugString(errstr) ;
+      syslog("%s: GetObject: %s\n", bm_name, get_system_message()) ;
    }
    el_height = bm.bmHeight ;
    if (el_width == 0) 
       el_width = bm.bmHeight ;
    num_elements = (unsigned) bm.bmWidth / el_width ;
 
-   // wsprintf(errstr, "%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
-   // OutputDebugString(errstr) ;
+   // syslog("%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
    color_menu_str = new char *[num_elements] ;
    unsigned j ;
    for (j=0; j<num_elements; j++) {
@@ -307,18 +301,14 @@ COLORREF bclock_element::select_color(COLORREF init_attr)
    }
 }
 
-//******************************************************************
+//*********************************************************************************
 //  Okay, this is going a little awry...
 //  For BE_DRAWN, which has SetColor functions in the
 //  color-selection menu, this function needs to act differently;
-//  hmmm....
-//  I guess for SetColor functions, this should call 
-//  select_color(), set the appropriate attribute, then
-//  return -1 so caller doesn't do anything else...
 //  
-//  Not a very clean solution; the user of the class will have
-//  a HARD time anticipating how this function works.
-//******************************************************************
+//  For BE_DRAWN, what this function needs is some way to communicate
+//  the fgnd/bgnd colors to the parent code, to save in config file.
+//*********************************************************************************
 int bclock_element::get_menu_id(unsigned menu_idx) 
 {
    if (menu_idx < menu_code) 

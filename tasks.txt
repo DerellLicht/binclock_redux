@@ -7,4 +7,7 @@ Remaining tasks:
   Communicating changes in these colors, between the two layers,
   is not working well (or at all) at this point.
   
+> char **color_menu_str could be converted to <string> ;
+  that would eliminate one of my pointer obstacles
 
+> convert all errstr references to syslog()
