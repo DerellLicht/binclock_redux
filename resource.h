@@ -49,6 +49,7 @@
 #define  ID_UNUSED            412
                               
 #define  ID_TOGGLE_WINMSGS    413
+#define  ID_DUMP_BIN_DATA     414
 
 //  This must be larger than all other IDs
 #define  ID_LAMPS0           2000

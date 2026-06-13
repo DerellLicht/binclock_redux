@@ -1,7 +1,5 @@
 Remaining tasks:
 
-> sub-menus still are not getting checked
-
 > Bound Boxes LED style does not save/restore changed colors
   fgnd/bgnd colors are stored globally in parent app,
   to support storage in config file.

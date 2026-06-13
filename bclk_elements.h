@@ -36,10 +36,10 @@ private:
    int y_offset ;
    u8 *skip_elements ;
    unsigned num_elements ;
-   unsigned curr_element ;
+   unsigned menu_code ;
+   unsigned curr_element ; //  current sub-menu index
    HBITMAP hSpriteBitmap;
    HMENU menu_hdl ;
-   unsigned menu_code ;
    unsigned object_code ;
    char **color_menu_str ;
    char menu_str[30] ;
@@ -52,10 +52,6 @@ private:
    COLORREF attr_high ;
    COLORREF attr_low  ;
    
-   //  these fields are used by external config manager
-   //  just export these as const variables
-   unsigned bit_menu ;
-
    //  internal functions
    char *get_system_message(void) const ;
    COLORREF select_color(COLORREF init_attr);
@@ -83,8 +79,12 @@ public:
       { return curr_element ; } ;
    unsigned get_off_color(void) const 
       { return off_idx ; } ;
-   unsigned get_bit_menu(void) const 
-      { return bit_menu ; } ;
+   unsigned get_menu_code(void) const 
+      { return menu_code ; } ;
+   unsigned get_curr_element(void) const 
+      { return curr_element ; } ;
+   unsigned get_sub_menu_code(void) const 
+      { return menu_code + curr_element ; } ;
    unsigned get_attr_high(void) const 
       { return attr_high ; } ;
    unsigned get_attr_low(void) const 

@@ -72,14 +72,13 @@ static HWND hwndSecs  = NULL;
 static HMENU hPopMenu = 0 ;
 
 //***********************************************************************
-unsigned bitmap_idx = 2 ;
-unsigned bit_menu = 2 ;
-unsigned layout_method = 0 ;
+unsigned bitmap_idx = 2 ;     //  currently-active top-level menu
+unsigned bit_menu = 2 ;       //  currently-active second-level menu
+unsigned layout_method = 0 ;  //  binary or bcd clock
 
 //  These color fields are used *only* for the "Bound Boxes" LED style
 unsigned crfg = RGB(128, 255, 0) ;
 unsigned crbg = RGB(128, 64, 0) ;
-
 
 //*******************************************************************
 static uint screen_width  = 0 ;
@@ -448,6 +447,7 @@ static bool do_timer(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVO
 //*******************************************************************
 static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOID private_data)
 {
+   uint j ;
    DWORD cmd = HIWORD (wParam) ;
    DWORD target = LOWORD(wParam) ;
    // putf(&this_term, "WM_COMMAND: cmd=%u, target=%u", cmd, target) ;
@@ -457,21 +457,24 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
       //******************************************************
       //  first check for a hit among the block_elements
       //******************************************************
-      for (uint j=0; j<elist_len; j++) {
+      for (j=0; j<elist_len; j++) {
          // if (element_list[j]->get_menu_id() == LOWORD (wParam)) {
          int temp_idx = element_list[j]->get_menu_id(LOWORD (wParam)) ;
          if (temp_idx >= 0) {
-            bit_menu = element_list[j]->get_bit_menu();
-            if (element_list[j]->get_flags() & BE_DRAWN) {
-               crfg = element_list[j]->get_attr_high();
-               crbg = element_list[j]->get_attr_low();
-            }
+            // bit_menu = element_list[j]->get_bit_menu();
+            // if (element_list[j]->get_flags() & BE_DRAWN) {
+            //    crfg = element_list[j]->get_attr_high();
+            //    crbg = element_list[j]->get_attr_low();
+            // }
             
             // bitmap_idx = LOWORD (wParam) - ID_LAMPS0;
             CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_UNCHECKED);
+            CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_UNCHECKED);
+            
+            //  activate next element
             bitmap_idx = (unsigned) temp_idx ;
             CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
-            // inireg.set_param("bitmap_idx", bitmap_idx) ;
+            CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
             save_cfg_file();
             found = 1 ;
             break;
@@ -493,6 +496,15 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
             // inireg.set_param("layout", layout_method) ;
             save_cfg_file();
             InvalidateRect (hwnd, NULL, TRUE) ;
+            return true ;
+            
+         case ID_DUMP_BIN_DATA:
+            for (j=0; j<elist_len; j++) {
+               syslog("%02u: menu code: %u, submenu code: %u, curr_el: %2u\n", j, 
+                  element_list[j]->get_menu_code(),
+                  element_list[j]->get_sub_menu_code(),
+                  element_list[j]->get_curr_element());
+            }
             return true ;
             
          case ID_TOGGLE_WINMSGS:
@@ -552,14 +564,13 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          }
 
          AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
-         // AppendMenu(hPopMenu, MF_STRING, ID_NEXT_COLOR,    _T("Select next color"));
          AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_LAYOUT,  _T("Toggle time format"));
-         // AppendMenu(hPopMenu, MF_STRING, ID_TRAYOPEN,       _T("Open clock window"));
-         // AppendMenu(hPopMenu, MF_STRING, ID_MINIMIZE,       _T("Minimize window"));
          AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_WINMSGS, _T("Toggle Winmsgs"));
+         // AppendMenu(hPopMenu, MF_STRING, ID_DUMP_BIN_DATA,  _T("Dump menu settings"));  //  DEBUG
          AppendMenu(hPopMenu, MF_STRING, ID_TRAYEXIT,       _T("Exit from program"));
          // CheckMenuItem (hPopMenu, (UINT) menu_handles[bitmap_idx], MF_CHECKED);
          CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
+         CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
       }
 
       SetForegroundWindow(hwnd);

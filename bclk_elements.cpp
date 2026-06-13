@@ -91,10 +91,10 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    y_offset(0),
    skip_elements(nullptr),
    num_elements(0),
+   menu_code(0),
    curr_element(start_element),
    hSpriteBitmap(0),
    menu_hdl(0),
-   menu_code(0),
    // object_code(0),
    object_code(be_object_num++),
    color_menu_str(NULL),
@@ -103,8 +103,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    attr_lhigh(0),
    attr_llow(0),
    attr_high(0),
-   attr_low(0),
-   bit_menu(0)
+   attr_low(0)
 {
    BITMAP bm;
    // object_code = be_object_num++ ;
@@ -181,10 +180,10 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
    y_offset(0),
    skip_elements(nullptr),
    num_elements(0),
+   menu_code(0),
    curr_element(start_element),
    hSpriteBitmap(0),
    menu_hdl(0),
-   menu_code(0),
    object_code(0),
    color_menu_str(NULL),
    menu_str(""),
@@ -192,8 +191,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
    attr_lhigh(0),
    attr_llow(0),
    attr_high(0),
-   attr_low(0),
-   bit_menu(0)
+   attr_low(0)
 {
    BITMAP bm;
    object_code = be_object_num++ ;
@@ -329,6 +327,7 @@ int bclock_element::get_menu_id(unsigned menu_idx)
       return -1 ;
    //  otherwise, it's to us
    curr_element = menu_idx - menu_code ;
+   // sub_menu_code = menu_idx ;
    if ((flags & BE_DRAWN)  &&  curr_element > 1) {
       if (curr_element == 2) {   //  set foreground color
          attr_high = select_color(attr_high) ;
@@ -346,10 +345,6 @@ int bclock_element::get_menu_id(unsigned menu_idx)
    if (flags & BE_PAIRS) {
       off_idx = curr_element - 1 ;
    }
-   //  this needs to store the actual index into the array...
-   // inireg.set_param("bit_menu", (unsigned) curr_element) ;
-   bit_menu = curr_element ;
-   // save_cfg_file();  //  this needs to set bit_menu in external code!!
    return object_code ;
 }
 
@@ -387,6 +382,8 @@ void bclock_element::mask_the_source(HDC hdc)
    DeleteDC (hdcMem);
 }
 
+//******************************************************************
+// this builds the second-level menus below the style menus
 //******************************************************************
 HMENU bclock_element::build_options_menu(void)
 {
@@ -479,7 +476,7 @@ void bclock_element::Solid_Rect(HDC hdc, int xl, int yu, int xr, int yl, COLORRE
 }
 
 //*********************************************************************
-//  this draws the clock frame
+//  this draws the clock frame (for Bound Boxes style)
 //*********************************************************************
 void bclock_element::draw_frame(HDC hdc, unsigned x, unsigned y, unsigned on_noff)
 {
