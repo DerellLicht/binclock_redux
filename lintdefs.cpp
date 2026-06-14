@@ -15,6 +15,8 @@
 //lint -e534   Ignoring return value of function
 //lint -e716   while(1) ... 
 
+//lint -e1051  Symbol 'operator new' is both a function and a variable
+
 //lint -esym(1784, WinMain)
 //lint -e1704  Constructor 'CStatusBar::CStatusBar(const CStatusBar &)' has private access specification
 //lint -e1719  assignment operator for class has non-reference parameter

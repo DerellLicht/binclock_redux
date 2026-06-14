@@ -14,6 +14,9 @@
 //  
 //***********************************************************************
 
+#include <vector>
+#include <string>
+
 #define  BE_LINEAR   0
 #define  BE_PAIRS    1
 #define  BE_DRAWN    2
@@ -34,16 +37,16 @@ private:
    unsigned off_idx ;
    int x_offset ;
    int y_offset ;
-   u8 *skip_elements ;
+   // u8 *skip_elements ;
+   std::vector<u8> skip_elementsv;
    unsigned num_elements ;
    unsigned menu_code ;
    unsigned curr_element ; //  current sub-menu index
    HBITMAP hSpriteBitmap;
    HMENU menu_hdl ;
    unsigned object_code ;
-   char **color_menu_str ;
+   std::vector<std::string> color_menu_str_list;
    char menu_str[30] ;
-   char errstr[81] ;
 
    //  attributes for draw_element
    COLORREF attr_lhigh ;
@@ -95,7 +98,7 @@ public:
    void add_color_menu_str(unsigned menu_idx, char *mstr) ;
    void add_skip_element(unsigned idx) {
       if (idx < num_elements) {
-         skip_elements[idx] = 1 ;
+         skip_elementsv[idx] = 1 ;
       } 
    } ;
    HMENU get_menu_handle(void) { return menu_hdl; } ;

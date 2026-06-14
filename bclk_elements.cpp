@@ -54,18 +54,20 @@ char *bclock_element::get_system_message(void) const
 }
 
 //***********************************************************************
+//  this function is not currently in use
+//***********************************************************************
 unsigned bclock_element::next_led_color(void)
 {
    if (flags & BE_DRAWN) {
       
    } else {
       curr_element++ ;
-      while (1) {
+      while (LOOP_FOREVER) {
          if (curr_element == num_elements) {
             curr_element = 0 ;
             continue;
          }
-         if (skip_elements[curr_element] != 0) {
+         if (skip_elementsv[curr_element] != 0) {
             curr_element++ ;
             continue;
          }
@@ -89,7 +91,8 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    off_idx(off_index),
    x_offset(0),
    y_offset(0),
-   skip_elements(nullptr),
+   // skip_elements(nullptr),
+   skip_elementsv(),
    num_elements(0),
    menu_code(0),
    curr_element(start_element),
@@ -97,21 +100,21 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    menu_hdl(0),
    // object_code(0),
    object_code(be_object_num++),
-   color_menu_str(NULL),
+   color_menu_str_list(),
    menu_str(""),
-   errstr(""),
    attr_lhigh(0),
    attr_llow(0),
    attr_high(0),
    attr_low(0)
 {
    BITMAP bm;
+   char errstr[81] ;
    // object_code = be_object_num++ ;
 
    //  if no filename provided, assume BE_DRAWN format
    if (name == 0) {
-      bm_name[0] = 0 ;
-      hSpriteBitmap = 0 ;
+      // bm_name[0] = 0 ;
+      // hSpriteBitmap = 0 ;
 
       el_height = width ;
       //  for drawn types, num_elements (which is an overloaded variable
@@ -143,25 +146,27 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
       num_elements = (unsigned) bm.bmWidth / el_width ;
    }
 
-   // wsprintf(errstr, "%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
-   // OutputDebugString(errstr) ;
-   color_menu_str = new char *[num_elements] ;
+   // syslog("%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
    unsigned j ;
    for (j=0; j<num_elements; j++) {
       //  use errstr as temp buffer
       wsprintf(errstr, "color %u", j) ;
-      color_menu_str[j] = new char[strlen(errstr)+1] ;
-      strcpy(color_menu_str[j], errstr) ;
+      color_menu_str_list.emplace_back(errstr);
+      
+      skip_elementsv.emplace_back(0) ;
    }
+   // syslog("sizeof skip_elementsv [a]: %u elements, num_elements: %u\n", skip_elementsv.size(), num_elements);
 
-   skip_elements = new u8[num_elements] ;
-   ZeroMemory(skip_elements, num_elements) ;
+   // skip_elements = new u8[num_elements] ;
+   // ZeroMemory(skip_elements, num_elements) ;
 
    if (off_idx < num_elements) {
-      skip_elements[off_idx] = 1 ;
+      // skip_elements[off_idx] = 1 ;
+      skip_elementsv[off_idx] = 1 ;
    }
    if (mask_idx >= 0  &&  (unsigned) mask_idx < num_elements) {
-      skip_elements[mask_idx] = 1 ; //lint !e661 !e662
+      // skip_elements[mask_idx] = 1 ; //lint !e661 !e662
+      skip_elementsv[mask_idx] = 1 ;
    }
 }
 
@@ -176,16 +181,16 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
    off_idx(off_index),
    x_offset(0),
    y_offset(0),
-   skip_elements(nullptr),
+   // skip_elements(nullptr),
+   skip_elementsv(),
    num_elements(0),
    menu_code(0),
    curr_element(start_element),
    hSpriteBitmap(0),
    menu_hdl(0),
    object_code(be_object_num++),
-   color_menu_str(NULL),
+   color_menu_str_list(),
    menu_str(""),
-   errstr(""),
    attr_lhigh(0),
    attr_llow(0),
    attr_high(0),
@@ -193,7 +198,6 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
 {
    BITMAP bm;
 
-   bm_name[0] = 0 ;
    hSpriteBitmap = (HBITMAP) LoadImage (g_hInst, MAKEINTRESOURCE(bm_resource), 
       IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
    if (hSpriteBitmap == NULL) {
@@ -209,21 +213,29 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
    num_elements = (unsigned) bm.bmWidth / el_width ;
 
    // syslog("%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
-   color_menu_str = new char *[num_elements] ;
    unsigned j ;
    for (j=0; j<num_elements; j++) {
+      char errstr[81] ;
       //  use errstr as temp buffer
       wsprintf(errstr, "color %u", j) ;
-      color_menu_str[j] = new char[strlen(errstr)+1] ;
-      strcpy(color_menu_str[j], errstr) ;
+      
+      color_menu_str_list.emplace_back(errstr);
+      
+      skip_elementsv.emplace_back(0) ;
    }
+   // syslog("sizeof skip_elementsv [b]: %u elements, num_elements: %u\n", skip_elementsv.size(), num_elements);
 
-   skip_elements = new u8[num_elements] ;
-   ZeroMemory(skip_elements, num_elements) ;
+   // skip_elements = new u8[num_elements] ;
+   // ZeroMemory(skip_elements, num_elements) ;
 
-   skip_elements[off_idx] = 1 ;
-   if (mask_idx >= 0)
-      skip_elements[mask_idx] = 1 ;
+   if (off_idx < num_elements) {
+      // skip_elements[off_idx] = 1 ;
+      skip_elementsv[off_idx] = 1 ;
+   }
+   if (mask_idx >= 0  &&  (unsigned) mask_idx < num_elements) {
+      // skip_elements[mask_idx] = 1 ;
+      skip_elementsv[mask_idx] = 1 ;
+   }
 }
 
 //***********************************************************************
@@ -274,11 +286,14 @@ void bclock_element::add_color_menu_str(unsigned menu_idx, char *mstr)
    if (menu_idx >= num_elements)
       return ;
 
-   if (color_menu_str[menu_idx] != 0)
-      delete[] color_menu_str[menu_idx] ;
-
-   color_menu_str[menu_idx] = new char[strlen(mstr)+1] ;
-   strcpy(color_menu_str[menu_idx], mstr) ;
+//    if (color_menu_str[menu_idx] != 0)
+//       delete[] color_menu_str[menu_idx] ;
+// 
+//    color_menu_str[menu_idx] = new char[strlen(mstr)+1] ;
+//    strcpy(color_menu_str[menu_idx], mstr) ;
+   
+   // color_menu_str_list.emplace_back(mstr);
+   color_menu_str_list[menu_idx] = mstr ;
 }
 
 //****************************************************************
@@ -364,8 +379,7 @@ void bclock_element::mask_the_source(HDC hdc)
 
       unsigned xsrc = j * el_width  ;
       if (!BitBlt (hdcMem, xsrc, 0, el_width, el_height, hdcMem, xmask, 0, SRCINVERT)) {
-         wsprintf(errstr, "BitBlt (source mask): %s", get_system_message()) ;
-         OutputDebugString(errstr) ;
+         syslog("BitBlt (source mask): %s", get_system_message()) ;
       }
    }
 
@@ -384,12 +398,11 @@ HMENU bclock_element::build_options_menu(void)
    // AppendMenu(hMenuOptions, MF_STRING, menu_code, "switch to ME!") ;
    for (j=0; j<num_elements; j++) {
       //  don't mask the mask image!!
-      if (skip_elements[j])
+      if (skip_elementsv[j])
          continue;
 
-      // wsprintf(mmsg, "color %u", j) ;
-      // AppendMenu(hMenuOptions, MF_STRING, IDC_STATIC, mmsg) ;
-      AppendMenu(hMenuOptions, MF_STRING, menu_code+j, color_menu_str[j]) ;
+      // AppendMenu(hMenuOptions, MF_STRING, menu_code+j, color_menu_str[j]) ;
+      AppendMenu(hMenuOptions, MF_STRING, menu_code+j, color_menu_str_list[j].c_str()) ;
    }
    menu_hdl = hMenuOptions ;
    return hMenuOptions;
@@ -473,9 +486,8 @@ void bclock_element::draw_frame(HDC hdc, unsigned x, unsigned y, unsigned on_nof
    unsigned xl = x ;
    unsigned yt = y ;
 
-   // wsprintf(errstr, "x=%u, y=%u, th=Tu, pad=%u, fw=%u\n",
+   // syslog("x=%u, y=%u, th=Tu, pad=%u, fw=%u\n",
    //    x, y, fthickness, fpadding) ;
-   // OutputDebugString(errstr) ;
    // unsigned xr = x + get_frame_width() ;
    // unsigned yb = y + get_frame_height() ;
    // unsigned frame_edge = fthickness + fpadding ;
@@ -512,8 +524,7 @@ void bclock_element::draw_sprite(HDC hdc, unsigned on_noff, unsigned xidest, uns
    // ysrc  = srow * el_height ;
    xdest = (int) xidest + x_offset ;
    ydest = (int) yidest + y_offset ;
-   // wsprintf(errstr, "mask_idx=%d\n", mask_idx) ;
-   // OutputDebugString(errstr) ;
+   // syslog("mask_idx=%d\n", mask_idx) ;
 
    hdcMem = CreateCompatibleDC (hdc);
    SelectObject (hdcMem, (HGDIOBJ) hSpriteBitmap);
@@ -523,22 +534,16 @@ void bclock_element::draw_sprite(HDC hdc, unsigned on_noff, unsigned xidest, uns
    } else
    if (mask_idx < 0) {
        if (!BitBlt (hdc, xdest, ydest, el_width, el_height, hdcMem, xsrc, 0, SRCCOPY)) {
-          // Statusbar_ShowMessage (get_system_message());
-          wsprintf(errstr, "BitBlt (copy): %s", get_system_message()) ;
-          OutputDebugString(errstr) ;
+          syslog("BitBlt (copy): %s", get_system_message()) ;
        }
    }
    else {
       xmask  = (unsigned) mask_idx * el_width  ;
       if (!BitBlt (hdc, xdest, ydest, el_width, el_height, hdcMem, xmask, 0, SRCAND)) {
-         // Statusbar_ShowMessage (get_system_message());
-         wsprintf(errstr, "BitBlt (mask): %s", get_system_message()) ;
-         OutputDebugString(errstr) ;
+         syslog("BitBlt (mask): %s", get_system_message()) ;
       }
       if (!BitBlt (hdc, xdest, ydest, el_width, el_height, hdcMem, xsrc, 0, SRCPAINT)) {
-         // Statusbar_ShowMessage (get_system_message());
-         wsprintf(errstr, "BitBlt (image): %s", get_system_message()) ;
-         OutputDebugString(errstr) ;
+         syslog("BitBlt (image): %s", get_system_message()) ;
       }
    }
    DeleteDC (hdcMem);

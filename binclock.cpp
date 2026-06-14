@@ -4,17 +4,10 @@
 //  with modern development techniques.
 //**********************************************************************
 
-//  This conversion from C array to <vector> class,
-//  change executable size from 32KB to 144KB
-#define  USE_VECTOR_CLASS
-// #undef  USE_VECTOR_CLASS
-
 static char szClassName[] = "binclock" ;
 
 #include <windows.h>
-#ifdef  USE_VECTOR_CLASS
-#include <vector>
-#endif
+// #include <vector>
 #include <commctrl.h>           //  link to comctl32.lib
 #include <math.h>
 #include <sys/stat.h>
@@ -173,6 +166,7 @@ static void load_bitmap_files(HWND hwnd)
    be_temp->add_skip_element(0) ;
    be_temp->add_skip_element(1) ;
    be_temp->add_color_menu_str(2, "green") ;
+   //  image 3 and 4 are the mask images
    be_temp->add_skip_element(5) ;
    be_temp->add_skip_element(6) ;
    be_temp->add_color_menu_str(7, "orange") ;
