@@ -43,7 +43,7 @@ private:
    unsigned menu_code ;
    unsigned curr_element ; //  current sub-menu index
    HBITMAP hSpriteBitmap;
-   HMENU menu_hdl ;
+   HMENU menu_hdl ;  //  this is *also* a pointer
    unsigned object_code ;
    std::vector<std::string> color_menu_str_list;
    char menu_str[30] ;

@@ -108,7 +108,6 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    attr_low(0)
 {
    BITMAP bm;
-   char errstr[81] ;
    // object_code = be_object_num++ ;
 
    //  if no filename provided, assume BE_DRAWN format
@@ -149,7 +148,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    // syslog("%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
    unsigned j ;
    for (j=0; j<num_elements; j++) {
-      //  use errstr as temp buffer
+      char errstr[81] ;
       wsprintf(errstr, "color %u", j) ;
       color_menu_str_list.emplace_back(errstr);
       

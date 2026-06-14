@@ -1,5 +1,8 @@
 Remaining tasks:
 
+> ledarray.bmp is not working on startup,
+  probably due to my change in skip_elements
+
 > Bound Boxes LED style does not save/restore changed colors
   fgnd/bgnd colors are stored globally in parent app,
   to support storage in config file.
@@ -7,7 +10,3 @@ Remaining tasks:
   Communicating changes in these colors, between the two layers,
   is not working well (or at all) at this point.
   
-> ledarray.bmp is not working on startup,
-  probably due to my change in skip_elements
-
-> convert all errstr references to syslog()
