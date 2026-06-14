@@ -1,0 +1,16 @@
+
+//  here is the contents of num_elements and skip_elementsv,
+//  for all currently-defined elements.
+//  mask_index and off_index get set in skip_elementsv by constructor,
+//  all other skippable elements must be separately set via add_skip_element()
+
+00000025	12:38:51	[33116]  0 [14] 1 1 0 1 1 1 1 0 1 1 0 1 1 0 	
+00000026	12:38:51	[33116]  1 [10] 1 0 0 0 0 0 0 0 0 0 	
+00000027	12:38:51	[33116]  2 [ 7] 1 1 0 0 0 0 0 	
+00000028	12:38:51	[33116]  3 [12] 1 1 0 0 0 0 0 0 0 0 0 0 	
+00000029	12:38:51	[33116]  4 [10] 1 1 0 0 0 0 0 0 0 0 	
+00000030	12:38:51	[33116]  5 [ 9] 1 1 0 0 0 0 0 0 0 	
+00000031	12:38:51	[33116]  6 [ 6] 1 1 0 0 0 0 	
+00000032	12:38:51	[33116]  7 [ 7] 1 1 0 1 0 1 0 	
+00000033	12:38:51	[33116]  8 [10] 1 1 0 0 0 0 0 0 0 0 	
+00000034	12:38:51	[33116]  9 [ 4] 1 0 0 0 	

@@ -283,7 +283,6 @@ static void load_bitmap_files(HWND hwnd)
    static char * const drawn_colors[] = 
       { " ", "select this element", "change ON color", "change OFF color", 0 } ; 
    for (j=0; drawn_colors[j] != 0; j++) {
-      // OutputDebugString(drawn_colors[j]) ;
       be_temp->add_color_menu_str(j, drawn_colors[j]) ;
    }
    be_temp->set_element_attr(crfg, crbg) ;
@@ -420,7 +419,7 @@ static bool do_init_dialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 
    Shell_NotifyIcon (NIM_ADD, &NotifyIconData);
 
-   timerID = SetTimer(hwnd, IDT_TIMER, 1000, (TIMERPROC) NULL) ;
+   timerID = SetTimer(hwnd, IDT_TIMER, 977, (TIMERPROC) NULL) ;
    return true ;
 }
 
@@ -452,10 +451,8 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
       //  first check for a hit among the block_elements
       //******************************************************
       for (j=0; j<elist_len; j++) {
-         // if (element_list[j]->get_menu_id() == LOWORD (wParam)) {
          int temp_idx = element_list[j]->get_menu_id(LOWORD (wParam)) ;
          if (temp_idx >= 0) {
-            // bit_menu = element_list[j]->get_bit_menu();
             // if (element_list[j]->get_flags() & BE_DRAWN) {
             //    crfg = element_list[j]->get_attr_high();
             //    crbg = element_list[j]->get_attr_low();
@@ -467,6 +464,8 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
             
             //  activate next element
             bitmap_idx = (unsigned) temp_idx ;
+            bit_menu = element_list[bitmap_idx]->get_curr_element() ;
+            // syslog("select bitmap_idx: %u, bit_menu: %u\n", bitmap_idx, bit_menu);
             CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
             CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
             save_cfg_file();
@@ -476,6 +475,7 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
       }
       if (found) {
          // syslog("found element %u, WParam: %u\n", j, wParam);
+         //  this function erases the main dialog drawing space for new display
          InvalidateRect (hwnd, NULL, TRUE) ;
          return true ;
       }
@@ -487,17 +487,18 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
 
          case ID_TOGGLE_LAYOUT:
             layout_method ^= 1 ;
-            // inireg.set_param("layout", layout_method) ;
             save_cfg_file();
+         //  this function erases the main dialog drawing space for new display
             InvalidateRect (hwnd, NULL, TRUE) ;
             return true ;
             
          case ID_DUMP_BIN_DATA:
             for (j=0; j<elist_len; j++) {
-               syslog("%02u: menu code: %u, submenu code: %u, curr_el: %2u\n", j, 
-                  element_list[j]->get_menu_code(),
-                  element_list[j]->get_sub_menu_code(),
-                  element_list[j]->get_curr_element());
+               // syslog("%02u: menu code: %u, submenu code: %u, curr_el: %2u\n", j, 
+               //    element_list[j]->get_menu_code(),
+               //    element_list[j]->get_sub_menu_code(),
+               //    element_list[j]->get_curr_element());
+               element_list[j]->debug_dump_data(j);
             }
             return true ;
             
@@ -505,7 +506,8 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
             show_winmsgs = !show_winmsgs ;
             save_cfg_file();
             CheckMenuItem (hPopMenu, ID_TOGGLE_WINMSGS, (show_winmsgs) ? MF_CHECKED : MF_UNCHECKED);
-            InvalidateRect (hwnd, NULL, TRUE) ;
+            //  this call isn't needed, because main dialog does not need to be redrawn
+            // InvalidateRect (hwnd, NULL, TRUE) ;
             return true ;
 
          // case ID_MINIMIZE:
@@ -562,6 +564,7 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          AppendMenu(hPopMenu, MF_STRING, ID_TOGGLE_WINMSGS, _T("Toggle Winmsgs"));
          // AppendMenu(hPopMenu, MF_STRING, ID_DUMP_BIN_DATA,  _T("Dump menu settings"));  //  DEBUG
          AppendMenu(hPopMenu, MF_STRING, ID_TRAYEXIT,       _T("Exit from program"));
+         
          // CheckMenuItem (hPopMenu, (UINT) menu_handles[bitmap_idx], MF_CHECKED);
          CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
          CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);

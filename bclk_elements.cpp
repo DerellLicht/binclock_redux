@@ -15,6 +15,7 @@
 
 //lint -esym(1714, bclock_element::bclock_element, bclock_element::get_on_color)
 //lint -esym(1714, bclock_element::get_off_color, bclock_element::next_led_color)
+//lint -esym(1714, bclock_element::get_menu_code, bclock_element::get_flags)
 
 //lint -esym(1762, bclock_element::Box, bclock_element::Solid_Rect, bclock_element::select_color)
 
@@ -170,6 +171,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
 }
 
 //***********************************************************************
+/*
 bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned width, 
    unsigned be_flags, int mask_index, unsigned off_index, unsigned start_element) :
    bm_name(""),
@@ -236,7 +238,7 @@ bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned wid
       skip_elementsv[mask_idx] = 1 ;
    }
 }
-
+  */
 //***********************************************************************
 // pointer member not directly freed or zeroed by destructor
 //lint -esym(1740, bclock_element::skip_elements, bclock_element::hSpriteBitmap)
@@ -331,7 +333,6 @@ int bclock_element::get_menu_id(unsigned menu_idx)
       return -1 ;
    //  otherwise, it's to us
    curr_element = menu_idx - menu_code ;
-   // sub_menu_code = menu_idx ;
    if ((flags & BE_DRAWN)  &&  curr_element > 1) {
       if (curr_element == 2) {   //  set foreground color
          attr_high = select_color(attr_high) ;
@@ -383,6 +384,22 @@ void bclock_element::mask_the_source(HDC hdc)
    }
 
    DeleteDC (hdcMem);
+}
+
+//******************************************************************
+// this builds the second-level menus below the style menus
+//******************************************************************
+void bclock_element::debug_dump_data(uint element_idx)
+{
+   char msg[81] ;
+   unsigned j ;
+   uint uoffset = 0 ;
+   uoffset += (uint) sprintf(msg, "%2u [%2u] ", element_idx, num_elements) ;
+   
+   for (j=0; j<num_elements; j++) {
+      uoffset += (uint) sprintf(msg+uoffset, "%u ", skip_elementsv[j]) ;
+   }
+   syslog("%s\n", msg);
 }
 
 //******************************************************************

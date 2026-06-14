@@ -39,7 +39,7 @@ private:
    int y_offset ;
    // u8 *skip_elements ;
    std::vector<u8> skip_elementsv;
-   unsigned num_elements ;
+   unsigned num_elements ; //  number of elements in secondary menu
    unsigned menu_code ;
    unsigned curr_element ; //  current sub-menu index
    HBITMAP hSpriteBitmap;
@@ -69,8 +69,8 @@ private:
 public:
    bclock_element(HINSTANCE g_hInst, char *name, unsigned width, unsigned be_flags, 
             int mask_index, unsigned off_index, unsigned start_element);
-   bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned width, unsigned be_flags, 
-            int mask_index, unsigned off_index, unsigned start_element);
+   // bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned width, unsigned be_flags, 
+   //          int mask_index, unsigned off_index, unsigned start_element);
    ~bclock_element() ;
    unsigned add_menu_data(unsigned umenu_code, char *mstr) ;
    int get_menu_id(unsigned menu_idx) ;
@@ -104,5 +104,6 @@ public:
    HMENU get_menu_handle(void) { return menu_hdl; } ;
    HMENU build_options_menu(void);
    void set_element_attr(COLORREF fgnd, COLORREF bgnd);
+   void debug_dump_data(uint element_idx);
 } ;
 
