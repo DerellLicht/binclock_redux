@@ -19,6 +19,7 @@
 
 //lint -esym(1762, bclock_element::Box, bclock_element::Solid_Rect, bclock_element::select_color)
 
+//  main menu number
 static unsigned be_object_num = 0 ;
 
 //***********************************************************************
@@ -333,18 +334,14 @@ int bclock_element::get_menu_id(unsigned menu_idx)
       return -1 ;
    //  otherwise, it's to us
    curr_element = menu_idx - menu_code ;
-   if ((flags & BE_DRAWN)  &&  curr_element > 1) {
+   if ((flags & BE_DRAWN)  &&  curr_element > 1) { // Bound Boxes
       if (curr_element == 2) {   //  set foreground color
          attr_high = select_color(attr_high) ;
-         // inireg.set_param("attr_on", (unsigned) attr_high) ;
-         // save_cfg_file();
       } else
       if (curr_element == 3) {   //  set background color
          attr_low = select_color(attr_low) ;
-         // inireg.set_param("attr_off", (unsigned) attr_low) ;
-         // save_cfg_file();
       } 
-      // syslog("bclk: attr_high: %06X, attr_low: %06X\n", attr_high, attr_low);
+      //  -1 is returned if color change was selected
       return -1;
    } 
    if (flags & BE_PAIRS) {
@@ -528,7 +525,6 @@ void bclock_element::draw_frame(HDC hdc, unsigned x, unsigned y, unsigned on_nof
 }
 
 //******************************************************************
-// void bclock_element::draw_sprite(HDC hdc, unsigned scol, unsigned srow, unsigned xidest, unsigned yidest)
 void bclock_element::draw_sprite(HDC hdc, unsigned on_noff, unsigned xidest, unsigned yidest)
 {
    unsigned xmask, xsrc ;
@@ -542,18 +538,22 @@ void bclock_element::draw_sprite(HDC hdc, unsigned on_noff, unsigned xidest, uns
    ydest = (int) yidest + y_offset ;
    // syslog("mask_idx=%d\n", mask_idx) ;
 
-   hdcMem = CreateCompatibleDC (hdc);
-   SelectObject (hdcMem, (HGDIOBJ) hSpriteBitmap);
-
    if (flags & BE_DRAWN) {
       draw_frame(hdc, xidest, yidest, on_noff) ;
    } else
    if (mask_idx < 0) {
-       if (!BitBlt (hdc, xdest, ydest, el_width, el_height, hdcMem, xsrc, 0, SRCCOPY)) {
-          syslog("BitBlt (copy): %s", get_system_message()) ;
-       }
+      hdcMem = CreateCompatibleDC (hdc);
+      SelectObject (hdcMem, (HGDIOBJ) hSpriteBitmap);
+
+      if (!BitBlt (hdc, xdest, ydest, el_width, el_height, hdcMem, xsrc, 0, SRCCOPY)) {
+         syslog("BitBlt (copy): %s", get_system_message()) ;
+      }
+      DeleteDC (hdcMem);
    }
    else {
+      hdcMem = CreateCompatibleDC (hdc);
+      SelectObject (hdcMem, (HGDIOBJ) hSpriteBitmap);
+
       xmask  = (unsigned) mask_idx * el_width  ;
       if (!BitBlt (hdc, xdest, ydest, el_width, el_height, hdcMem, xmask, 0, SRCAND)) {
          syslog("BitBlt (mask): %s", get_system_message()) ;
@@ -561,7 +561,7 @@ void bclock_element::draw_sprite(HDC hdc, unsigned on_noff, unsigned xidest, uns
       if (!BitBlt (hdc, xdest, ydest, el_width, el_height, hdcMem, xsrc, 0, SRCPAINT)) {
          syslog("BitBlt (image): %s", get_system_message()) ;
       }
+      DeleteDC (hdcMem);
    }
-   DeleteDC (hdcMem);
 }
 

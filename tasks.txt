@@ -1,12 +1,24 @@
 Remaining tasks:
 
-> Bound Boxes LED style does not save/restore changed colors
-  fgnd/bgnd colors are stored globally in parent app,
-  to support storage in config file.
-  However, color changes are handled by functions in the bclk_elements class.
-  Communicating changes in these colors, between the two layers,
-  is not working well (or at all) at this point.
+> ERROR: if this mode is selected, then left sitting with no further action,
+the taskbar menu becomes corrupted after a while...  
   
 > research C++ move constructor, so I can use <vector> for base class
 
-  
+Key points:
+    - move constructor
+    - std::unique_ptr
+    - x&&
+
+from https://www.reddit.com/user/DrShocker/ on 06.13.26
+These are 2 separate things, and most likely you can make the class movable. 
+For an example of a class that is movable and not copyable, there's std::unique_ptr
+
+You can't copy it because of course then there wouldn't be a unique pointer with just 1 owner. 
+However, it can be moved as much as you want.
+
+other notes:
+C++17
+❝A non-template constructor for class X is a move constructor if its first parameter is of 
+type X&&, const X&&, volatile X&&, or const volatile X&&, and either 
+there are no other parameters or else all other parameters have default arguments (11.3.6).❞

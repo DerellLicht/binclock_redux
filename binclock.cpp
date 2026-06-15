@@ -453,11 +453,6 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
       for (j=0; j<elist_len; j++) {
          int temp_idx = element_list[j]->get_menu_id(LOWORD (wParam)) ;
          if (temp_idx >= 0) {
-            // if (element_list[j]->get_flags() & BE_DRAWN) {
-            //    crfg = element_list[j]->get_attr_high();
-            //    crbg = element_list[j]->get_attr_low();
-            // }
-            
             // bitmap_idx = LOWORD (wParam) - ID_LAMPS0;
             CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_UNCHECKED);
             CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_UNCHECKED);
@@ -471,6 +466,14 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
             save_cfg_file();
             found = 1 ;
             break;
+         }
+         //  temp_idx == -1 if BE_DRAWN color change was selected
+         else {
+            if (element_list[j]->get_flags() & BE_DRAWN) {
+               crfg = element_list[j]->get_attr_high();
+               crbg = element_list[j]->get_attr_low();
+               save_cfg_file();
+            }
          }
       }
       if (found) {
@@ -488,7 +491,7 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
          case ID_TOGGLE_LAYOUT:
             layout_method ^= 1 ;
             save_cfg_file();
-         //  this function erases the main dialog drawing space for new display
+            //  this function erases the main dialog drawing space for new display
             InvalidateRect (hwnd, NULL, TRUE) ;
             return true ;
             
@@ -551,11 +554,7 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
 
          for (uint j=0; j<elist_len; j++) {
-            // AppendMenu(hPopMenu, MF_STRING, 
-            //       element_list[j]->get_menu_id(),
-            //    _T(element_list[j]->get_menu_str())) ;
             HMENU hMenuTemp = (HMENU) element_list[j]->build_options_menu() ;
-            // menu_handles[j] = hMenuTemp ;
             AppendMenu(hPopMenu, MF_POPUP, (UINT) hMenuTemp, _T(element_list[j]->get_menu_str())) ;
          }
 
