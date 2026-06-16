@@ -485,7 +485,9 @@ void bclock_element::Solid_Rect(HDC hdc, int xl, int yu, int xr, int yl, COLORRE
    HBRUSH hBrush ;
    RECT   rect ;
 
-   SetRect (&rect, xl, yu, xr, yl) ;
+   if (SetRect (&rect, xl, yu, xr, yl) == 0) {
+      syslog("SetRect: %s\n", get_system_message());
+   }
    hBrush = CreateSolidBrush (Color) ;
    FillRect (hdc, &rect, hBrush) ;
    DeleteObject (hBrush) ;
