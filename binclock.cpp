@@ -156,6 +156,7 @@ static void load_bitmap_files(HWND hwnd)
    //          unsigned width, unsigned flags,
    //          int mask_index, unsigned off_index, unsigned start_element);
    start_element = (bitmap_idx == idx) ? bit_menu : 10 ;
+   // binclock.cpp:159:4: warning: assigning newly created 'gsl::owner<>' to non-owner 'bclock_element *' [cppcoreguidelines-owning-memory]
    be_temp = new bclock_element(g_hInst, "ledarray.bmp", 22, BE_LINEAR, 3, 4, start_element);
    
    // char *ledname = "ledarray.bmp" ;

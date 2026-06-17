@@ -25,32 +25,50 @@ static unsigned be_object_num = 0 ;
 //***********************************************************************
 char *bclock_element::get_system_message(void) const
 {
-   static char msg[261] ;
-   int slen ;
-
+#define  GSM_LEN     1024
+   static char msg[GSM_LEN+1] ;
+   // int slen ;
+   uint errcode = 0 ;
+   int result = (int) GetLastError() ;
+   if (result < 0) {
+      result = -result ;
+      errcode = (DWORD) result ;
+      // wsprintfA(msg, "Win32: unknown error code %d", result) ;
+      // return msg;
+   }
    LPVOID lpMsgBuf;
-   FormatMessage( 
-      FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-      FORMAT_MESSAGE_FROM_SYSTEM | 
+   DWORD dresult = FormatMessage(
+      FORMAT_MESSAGE_ALLOCATE_BUFFER |
+      FORMAT_MESSAGE_FROM_SYSTEM |
       FORMAT_MESSAGE_IGNORE_INSERTS,
       NULL,
-      GetLastError(),
+      errcode,
       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-      (LPTSTR) &lpMsgBuf,
+      (char *) &lpMsgBuf, //lint !e740
       0, 0);
    // Process any inserts in lpMsgBuf.
    // ...
    // Display the string.
-   strncpy(msg, (char *) lpMsgBuf, 260) ;
-
-   // Free the buffer.
-   LocalFree( lpMsgBuf );
+   if (dresult == 0) {
+      DWORD glError = GetLastError() ;
+      if (glError == 317) {   //  see comment at start of function
+         sprintf(msg, "FormatMessage(): no message for error code %d", result) ;
+      } else {
+         sprintf(msg, "FormatMessage() failed: [%u], errcode %d", (uint) GetLastError(), result) ;
+      }
+      
+   } else
+   if (lpMsgBuf == NULL) {
+      sprintf(msg, "NULL buffer in response from FormatMessage() [%u]", (uint) GetLastError()) ;
+   } else 
+   {
+      strncpy((char *) msg, (char *) lpMsgBuf, GSM_LEN) ;
+      // Free the buffer.
+      LocalFree( lpMsgBuf );
+   }
 
    //  trim the newline off the message before copying it...
-   slen = strlen(msg) ;
-   if (msg[slen-1] == 10  ||  msg[slen-1] == 10) {
-      msg[slen-1] = 0 ;
-   }
+   strip_newlines(msg) ;
 
    return msg;
 }
