@@ -26,6 +26,9 @@
 #define  BX_SHADOW_OUTER   1
 #define  BX_SHADOW_INNER   2
 
+//lint -esym(1714, bclock_element::operator=)  Member function not referenced
+//lint -esym(1526, bclock_element::operator=, bclock_element::bclock_element)  member function not defined
+
 //***********************************************************************
 // warning: class 'bclock_element' defines a destructor, a copy constructor and a copy assignment operator 
 // but does not define a move constructor or a move assignment operator 

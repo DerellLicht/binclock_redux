@@ -42,3 +42,6 @@
 //lint -e713  Loss of precision (arg. no. 1) (unsigned int to int)
 //lint -e732  Loss of sign (initialization) (int to unsigned long)
 
+//  new C++ conflicts
+//lint -e1008  In declaration of member function, did not expect '= delete'; text ignored
+
