@@ -28,6 +28,8 @@ Checks: |
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -cppcoreguidelines-owning-memory,
   -cppcoreguidelines-avoid-goto,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-use-enum-class,
   modernize-*,
   -modernize-use-nullptr,
   -modernize-macro-to-enum,
@@ -39,7 +41,8 @@ Checks: |
   -modernize-deprecated-headers,
   -modernize-use-bool-literals,
   -modernize-use-auto,
+  -modernize-avoid-variadic-functions,
   performance-*,
   -performance-no-int-to-ptr,
-
+  -performance-enum-size,
   

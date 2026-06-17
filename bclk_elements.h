@@ -27,7 +27,10 @@
 #define  BX_SHADOW_INNER   2
 
 //***********************************************************************
-class bclock_element {
+// warning: class 'bclock_element' defines a destructor, a copy constructor and a copy assignment operator 
+// but does not define a move constructor or a move assignment operator 
+// [cppcoreguidelines-special-member-functions]
+class bclock_element {  // NOLINT
 private:
    char bm_name[1024] ;
    unsigned el_width ;
@@ -62,16 +65,17 @@ private:
    void Solid_Rect(HDC hdc, int xl, int yu, int xr, int yl, COLORREF Color);
    void draw_frame(HDC hdc, unsigned x, unsigned y, unsigned on_noff);
 
-   //  bypass the assignment operator and copy constructor
-   bclock_element &operator=(const bclock_element &src) ;
-   bclock_element(const bclock_element&);
-   
 public:
    bclock_element(HINSTANCE g_hInst, char *name, unsigned width, unsigned be_flags, 
             int mask_index, unsigned off_index, unsigned start_element);
    // bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned width, unsigned be_flags, 
    //          int mask_index, unsigned off_index, unsigned start_element);
    ~bclock_element() ;
+   
+   //  bypass the assignment operator and copy constructor
+   bclock_element &operator=(const bclock_element &src) = delete;
+   bclock_element(const bclock_element&) = delete;
+   
    unsigned add_menu_data(unsigned umenu_code, char *mstr) ;
    int get_menu_id(unsigned menu_idx) ;
    char *get_menu_str(void) ;
