@@ -1,10 +1,5 @@
 Remaining tasks:
 
-> ERROR: if this mode is selected, then left sitting with no further action,
-the taskbar menu becomes corrupted after a while...  
-
-This was true for the original version as well
-  
 > research C++ move constructor, so I can use <vector> for base class
 
 Key points:

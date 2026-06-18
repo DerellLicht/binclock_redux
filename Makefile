@@ -36,10 +36,10 @@ LiFLAGS += -Ider_libs
 LINTFILES=lintdefs.cpp lintdefs.ref.h 
 
 #  clang-tidy options
-CHFLAGS = -header-filter=.*
+#CHFLAGS = -header-filter=.*
 CHTAIL = --
 CHTAIL += -Ider_libs
-CHTAIL += -std=c++14
+#CHTAIL += -std=c++14
 CHTAIL += -Wall
 ifeq ($(USE_64BIT),YES)
 CHTAIL += -DUSE_64BIT

@@ -6,9 +6,9 @@ Checks: |
   -bugprone-easily-swappable-parameters,
   -bugprone-narrowing-conversions,
   -bugprone-switch-missing-default-case,
-  -bugprone-throwing-static-initialization
-  -bugprone-incorrect-roundings
-  -bugprone-assignment-in-if-condition
+  -bugprone-throwing-static-initialization,
+  -bugprone-incorrect-roundings,
+  -bugprone-assignment-in-if-condition,
   clang-analyzer-*,
   -clang-analyzer-security.insecureAPI.strcpy,
   clang-diagnostic-*,
@@ -32,6 +32,8 @@ Checks: |
   -cppcoreguidelines-avoid-goto,
   -cppcoreguidelines-pro-type-union-access,
   -cppcoreguidelines-use-enum-class,
+  -cppcoreguidelines-prefer-member-initializer,
+  -cppcoreguidelines-avoid-do-while,
   modernize-*,
   -modernize-use-nullptr,
   -modernize-macro-to-enum,
@@ -45,6 +47,7 @@ Checks: |
   -modernize-use-auto,
   -modernize-avoid-variadic-functions,
   -modernize-use-using,
+  -modernize-use-nodiscard,
   performance-*,
   -performance-no-int-to-ptr,
   -performance-enum-size,

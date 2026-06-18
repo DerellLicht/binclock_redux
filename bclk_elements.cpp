@@ -440,7 +440,13 @@ HMENU bclock_element::build_options_menu(void)
 }
 
 //************************************************************************
-void bclock_element::Box(HDC hdc, int x0, int y0, int x1, int y1, unsigned style, COLORREF fgattr, COLORREF bgattr)
+//  WARNING: THIS FUNCTION IS FLAWED !!
+//  The act of calling CreatePen() and SelectObject() once,
+//  then calling them a second time and over-writing the previous resources,
+//  causes the graphic environment to become corrupted after a few minutes,
+//  probably due to running out of one of the resources.
+//************************************************************************
+void bclock_element::BoxDoNotUse(HDC hdc, int x0, int y0, int x1, int y1, unsigned style, COLORREF fgattr, COLORREF bgattr)
 {
    HPEN hPen = 0 ;
 
@@ -497,6 +503,22 @@ void bclock_element::Box(HDC hdc, int x0, int y0, int x1, int y1, unsigned style
    }
 }
 
+/************************************************************************/
+void bclock_element::Solid_Box(HDC hdc, int x0, int y0, int x1, int y1, COLORREF Color)
+{
+   HPEN hPen = CreatePen(PS_SOLID, 1, Color) ;
+   SelectObject(hdc, hPen) ;
+
+   MoveToEx(hdc, x0, y0, NULL) ;
+   LineTo  (hdc, x1, y0) ;
+   LineTo  (hdc, x1, y1) ;
+   LineTo  (hdc, x0, y1) ;
+   LineTo  (hdc, x0, y0) ;
+
+   SelectObject(hdc, GetStockObject(BLACK_PEN)) ;  //  deselect my pen
+   DeleteObject (hPen) ;
+}
+
 //************************************************************************
 void bclock_element::Solid_Rect(HDC hdc, int xl, int yu, int xr, int yl, COLORREF Color)
 {
@@ -529,19 +551,11 @@ void bclock_element::draw_frame(HDC hdc, unsigned x, unsigned y, unsigned on_nof
 
    Solid_Rect(hdc, xl, yt, xr, yb, (on_noff) ? attr_high : attr_low) ;
 
-   // Box(hdc, xl, yt, xr, yb, BX_SOLID, attr_lhigh, 0) ;
-   // xl++ ;  yt++ ;  xr-- ;  yb-- ;
-   // Box(hdc, xl, yt, xr, yb, BX_SOLID, attr_lhigh, 0) ;
-   // xl-- ;  yt-- ;  
-   // Box(hdc, xl, yt, xr, yb, BX_SOLID, attr_lhigh, 0) ;
-
-   Box(hdc, xl, yt, xr, yb, BX_SHADOW_OUTER, attr_lhigh, attr_llow) ;
-   // xl++ ;  yt++ ;  xr-- ;  yb-- ;
    // Box(hdc, xl, yt, xr, yb, BX_SHADOW_OUTER, attr_lhigh, attr_llow) ;
+   Solid_Box(hdc, xl, yt, xr, yb, attr_lhigh) ;
    xl++ ;  yt++ ;  xr-- ;  yb-- ;
-   Box(hdc, xl, yt, xr, yb, BX_SHADOW_INNER, attr_lhigh, attr_llow) ;
-   // xl++ ;  yt++ ;  xr-- ;  yb-- ;
    // Box(hdc, xl, yt, xr, yb, BX_SHADOW_INNER, attr_lhigh, attr_llow) ;
+   Solid_Box(hdc, xl, yt, xr, yb, attr_llow) ;
 }
 
 //******************************************************************

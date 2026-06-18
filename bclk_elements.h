@@ -64,7 +64,8 @@ private:
    //  internal functions
    char *get_system_message(void) const ;
    COLORREF select_color(COLORREF init_attr);
-   void Box(HDC hdc, int x0, int y0, int x1, int y1, unsigned style, COLORREF fgattr, COLORREF bgattr);
+   void BoxDoNotUse(HDC hdc, int x0, int y0, int x1, int y1, unsigned style, COLORREF fgattr, COLORREF bgattr);
+   void Solid_Box(HDC hdc, int x0, int y0, int x1, int y1, COLORREF Color);
    void Solid_Rect(HDC hdc, int xl, int yu, int xr, int yl, COLORREF Color);
    void draw_frame(HDC hdc, unsigned x, unsigned y, unsigned on_noff);
 
