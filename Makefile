@@ -29,7 +29,7 @@ CFLAGS=-Wall -O3
 LFLAGS=-s -mwindows
 endif
 CFLAGS += -Wno-write-strings
-CFLAGS += -Weffc++
+# CFLAGS += -Weffc++
 CFLAGS += -Ider_libs
 LiFLAGS += -Ider_libs
 

@@ -137,7 +137,9 @@ static unsigned elist_len = 0 ;  //  how many elements are *actually* in element
 //  copy constructor.  Much more data available here:
 // https://www.reddit.com/r/cpp_questions/comments/1u47huj/next_step_in_converting_c_arrays_to_vector/
 
-// std::vector<bclock_element> element_listv ;
+#ifdef  USE_UNIQUE_PTR   
+std::vector<bclock_element> element_listv ;
+#endif
 
 // static bclock_element *element = NULL ;
 
@@ -455,15 +457,19 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
          int temp_idx = element_list[j]->get_menu_id(LOWORD (wParam)) ;
          if (temp_idx >= 0) {
             // bitmap_idx = LOWORD (wParam) - ID_LAMPS0;
-            CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_UNCHECKED);
-            CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_UNCHECKED);
+            // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_UNCHECKED);
+            element_list[bitmap_idx]->check_menu_item(hPopMenu, MF_UNCHECKED);
+            // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_UNCHECKED);
+            element_list[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_UNCHECKED);
             
             //  activate next element
             bitmap_idx = (unsigned) temp_idx ;
             bit_menu = element_list[bitmap_idx]->get_curr_element() ;
             // syslog("select bitmap_idx: %u, bit_menu: %u\n", bitmap_idx, bit_menu);
-            CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
-            CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
+            // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
+            element_list[bitmap_idx]->check_menu_item(hPopMenu, MF_CHECKED);
+            // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
+            element_list[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_CHECKED);
             save_cfg_file();
             found = 1 ;
             break;
@@ -566,8 +572,10 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          AppendMenu(hPopMenu, MF_STRING, ID_TRAYEXIT,       _T("Exit from program"));
          
          // CheckMenuItem (hPopMenu, (UINT) menu_handles[bitmap_idx], MF_CHECKED);
-         CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
-         CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
+         // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
+         element_list[bitmap_idx]->check_menu_item(hPopMenu, MF_CHECKED);
+         // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
+         element_list[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_CHECKED);
       }
 
       SetForegroundWindow(hwnd);

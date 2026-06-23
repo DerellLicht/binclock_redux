@@ -16,6 +16,10 @@
 
 #include <vector>
 #include <string>
+#include <memory>
+
+// #define USE_UNIQUE_PTR
+#undef USE_UNIQUE_PTR
 
 #define  BE_LINEAR   0
 #define  BE_PAIRS    1
@@ -48,8 +52,13 @@ private:
    unsigned num_elements ; //  number of elements in secondary menu
    unsigned menu_code ;
    unsigned curr_element ; //  current sub-menu index
+#ifdef  USE_UNIQUE_PTR   
+   std::unique_ptr<HBITMAP> hSpriteBitmap;
+   std::unique_ptr<HMENU> menu_hdl ;  //  this is *also* a pointer
+#else
    HBITMAP hSpriteBitmap;
    HMENU menu_hdl ;  //  this is *also* a pointer
+#endif   
    unsigned object_code ;
    std::vector<std::string> color_menu_str_list;
    char menu_str[30] ;
@@ -71,14 +80,18 @@ private:
 
 public:
    bclock_element(HINSTANCE g_hInst, char *name, unsigned width, unsigned be_flags, 
-            int mask_index, unsigned off_index, unsigned start_element);
-   // bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned width, unsigned be_flags, 
-   //          int mask_index, unsigned off_index, unsigned start_element);
+                  int mask_index, unsigned off_index, unsigned start_element);
    ~bclock_element() ;
    
-   //  bypass the assignment operator and copy constructor
+   //  bypass the copy assignment operator and copy constructor
    bclock_element &operator=(const bclock_element &src) = delete;
    bclock_element(const bclock_element&) = delete;
+   
+   //  create a move assignment operator and move constructor 
+   // bclock_element &operator=(bclock_element &&src) noexcept;
+   // bclock_element(bclock_element&& obj) noexcept;
+   bclock_element &operator=(bclock_element &&src) = delete;
+   bclock_element(bclock_element&& obj) = delete;
    
    unsigned add_menu_data(unsigned umenu_code, char *mstr) ;
    int get_menu_id(unsigned menu_idx) ;
@@ -90,12 +103,12 @@ public:
       { return curr_element ; } ;
    unsigned get_off_color(void) const 
       { return off_idx ; } ;
-   unsigned get_menu_code(void) const 
-      { return menu_code ; } ;
+   // unsigned get_menu_code(void) const 
+   //    { return menu_code ; } ;
+   // unsigned get_sub_menu_code(void) const 
+   //    { return menu_code + curr_element ; } ;
    unsigned get_curr_element(void) const 
       { return curr_element ; } ;
-   unsigned get_sub_menu_code(void) const 
-      { return menu_code + curr_element ; } ;
    unsigned get_attr_high(void) const 
       { return attr_high ; } ;
    unsigned get_attr_low(void) const 
@@ -104,12 +117,14 @@ public:
       { return flags ; } ;
    unsigned next_led_color(void) ;
    void add_color_menu_str(unsigned menu_idx, char *mstr) ;
+   void check_menu_item(HMENU hPopMenu, uint checked_state);
+   void check_sub_menu_item(HMENU hPopMenu, uint checked_state);
    void add_skip_element(unsigned idx) {
       if (idx < num_elements) {
          skip_elementsv[idx] = 1 ;
       } 
    } ;
-   HMENU get_menu_handle(void) { return menu_hdl; } ;
+   // HMENU get_menu_handle(void) { return menu_hdl; } ;
    HMENU build_options_menu(void);
    void set_element_attr(COLORREF fgnd, COLORREF bgnd);
    void debug_dump_data(uint element_idx);

@@ -9,6 +9,7 @@
 //***********************************************************************
 
 #include <windows.h>
+#include <utility>   //  for std::move
 
 #include "common.h"
 #include "bclk_elements.h"
@@ -129,6 +130,9 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
 {
    BITMAP bm;
    // object_code = be_object_num++ ;
+#ifdef  USE_UNIQUE_PTR   
+   HBITMAP hbmtemp ;
+#endif   
 
    //  if no filename provided, assume BE_DRAWN format
    if (name == 0) {
@@ -150,20 +154,34 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    //  open the bitmap file, read sprite images into memory
    else {
       strncpy(bm_name, name, sizeof(bm_name)-1) ;
+#ifdef  USE_UNIQUE_PTR   
+      hbmtemp = (HBITMAP) LoadImage (g_hInst, bm_name, 
+#else      
       hSpriteBitmap = (HBITMAP) LoadImage (g_hInst, bm_name, 
+#endif      
          IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
       if (hSpriteBitmap == NULL) {
          syslog("%s: LoadImage: %s\n", bm_name, get_system_message()) ;
       }
-
+#ifdef  USE_UNIQUE_PTR   
+      if (GetObject ((HGDIOBJ) hbmtemp, sizeof (BITMAP), &bm) == 0) {
+#else
       if (GetObject ((HGDIOBJ) hSpriteBitmap, sizeof (BITMAP), &bm) == 0) {
+#endif      
          syslog("%s: GetObject: %s\n", bm_name, get_system_message()) ;
       }
+#ifdef  USE_UNIQUE_PTR   
+      hSpriteBitmap = std::make_unique<HBITMAP>(hbmtemp);
+#endif      
       el_height = bm.bmHeight ;
       if (el_width == 0) 
          el_width = bm.bmHeight ;
       num_elements = (unsigned) bm.bmWidth / el_width ;
    }
+   
+#ifdef  USE_UNIQUE_PTR   
+   menu_hdl = std::make_unique<HMENU>(nullptr);
+#endif   
 
    // syslog("%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
    unsigned j ;
@@ -190,74 +208,29 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
 }
 
 //***********************************************************************
-/*
-bclock_element::bclock_element(HINSTANCE g_hInst, UINT bm_resource, unsigned width, 
-   unsigned be_flags, int mask_index, unsigned off_index, unsigned start_element) :
-   bm_name(""),
-   el_width(width),
-   el_height(0),
-   flags(be_flags),
-   mask_idx(mask_index), //  negative means no mask is used
-   off_idx(off_index),
-   x_offset(0),
-   y_offset(0),
-   // skip_elements(nullptr),
-   skip_elementsv(),
-   num_elements(0),
-   menu_code(0),
-   curr_element(start_element),
-   hSpriteBitmap(0),
-   menu_hdl(0),
-   object_code(be_object_num++),
-   color_menu_str_list(),
-   menu_str(""),
-   attr_lhigh(0),
-   attr_llow(0),
-   attr_high(0),
-   attr_low(0)
-{
-   BITMAP bm;
+//  create a move constructor
+//***********************************************************************
+// bclock_element::bclock_element(bclock_element&& obj) noexcept
+// {
+//    if (this != &obj) {
+//       //  *this = std::move(obj);   //  I'm not sure about this
+//       hSpriteBitmap = std::exchange(obj.hSpriteBitmap, nullptr) ; // HBITMAP 
+//       menu_hdl = std::exchange(obj.menu_hdl, nullptr) ;  // HMENU 
+//    }
+// }
 
-   hSpriteBitmap = (HBITMAP) LoadImage (g_hInst, MAKEINTRESOURCE(bm_resource), 
-      IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
-   if (hSpriteBitmap == NULL) {
-      syslog("%s: LoadImage: %s\n", bm_name, get_system_message()) ;
-   }
+//***********************************************************************
+//  create a move assignment operator
+//***********************************************************************
+// bclock_element &bclock_element::operator=(bclock_element &&obj) noexcept
+// {
+//    if (this != &obj) {
+//       hSpriteBitmap = std::exchange(obj.hSpriteBitmap, nullptr) ; // HBITMAP 
+//       menu_hdl = std::exchange(obj.menu_hdl, nullptr) ;  // HMENU 
+//    }
+//    return *this;
+// }
 
-   if (GetObject ((HGDIOBJ) hSpriteBitmap, sizeof (BITMAP), &bm) == 0) {
-      syslog("%s: GetObject: %s\n", bm_name, get_system_message()) ;
-   }
-   el_height = bm.bmHeight ;
-   if (el_width == 0) 
-      el_width = bm.bmHeight ;
-   num_elements = (unsigned) bm.bmWidth / el_width ;
-
-   // syslog("%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
-   unsigned j ;
-   for (j=0; j<num_elements; j++) {
-      char errstr[81] ;
-      //  use errstr as temp buffer
-      wsprintf(errstr, "color %u", j) ;
-      
-      color_menu_str_list.emplace_back(errstr);
-      
-      skip_elementsv.emplace_back(0) ;
-   }
-   // syslog("sizeof skip_elementsv [b]: %u elements, num_elements: %u\n", skip_elementsv.size(), num_elements);
-
-   // skip_elements = new u8[num_elements] ;
-   // ZeroMemory(skip_elements, num_elements) ;
-
-   if (off_idx < num_elements) {
-      // skip_elements[off_idx] = 1 ;
-      skip_elementsv[off_idx] = 1 ;
-   }
-   if (mask_idx >= 0  &&  (unsigned) mask_idx < num_elements) {
-      // skip_elements[mask_idx] = 1 ;
-      skip_elementsv[mask_idx] = 1 ;
-   }
-}
-  */
 //***********************************************************************
 // pointer member not directly freed or zeroed by destructor
 //lint -esym(1740, bclock_element::skip_elements, bclock_element::hSpriteBitmap)
@@ -306,14 +279,20 @@ void bclock_element::add_color_menu_str(unsigned menu_idx, char *mstr)
    if (menu_idx >= num_elements)
       return ;
 
-//    if (color_menu_str[menu_idx] != 0)
-//       delete[] color_menu_str[menu_idx] ;
-// 
-//    color_menu_str[menu_idx] = new char[strlen(mstr)+1] ;
-//    strcpy(color_menu_str[menu_idx], mstr) ;
-   
    // color_menu_str_list.emplace_back(mstr);
    color_menu_str_list[menu_idx] = mstr ;
+}
+
+//****************************************************************
+void bclock_element::check_menu_item(HMENU hPopMenu, uint checked_state)
+{
+   CheckMenuItem (hPopMenu, (UINT) menu_hdl, MF_UNCHECKED);
+}
+
+//****************************************************************
+void bclock_element::check_sub_menu_item(HMENU hPopMenu, uint checked_state)
+{
+   CheckMenuItem (hPopMenu, (UINT) menu_code + curr_element, MF_UNCHECKED);
 }
 
 //****************************************************************
