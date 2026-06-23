@@ -383,9 +383,10 @@ void bclock_element::mask_the_source(HDC hdc)
 //******************************************************************
 // this builds the second-level menus below the style menus
 //******************************************************************
-void bclock_element::debug_dump_data(uint element_idx)
+void bclock_element::debug_dump_data(void)
 {
    char msg[81] ;
+   uint element_idx = 0 ;
    unsigned j ;
    uint uoffset = 0 ;
    uoffset += (uint) sprintf(msg, "%2u [%2u] ", element_idx, num_elements) ;

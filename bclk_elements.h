@@ -127,6 +127,6 @@ public:
    // HMENU get_menu_handle(void) { return menu_hdl; } ;
    HMENU build_options_menu(void);
    void set_element_attr(COLORREF fgnd, COLORREF bgnd);
-   void debug_dump_data(uint element_idx);
+   void debug_dump_data(void);
 } ;
 

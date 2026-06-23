@@ -128,9 +128,9 @@ static void set_window_position(HWND hwnd)
 }
 
 //***********************************************************************
-#define  NUM_ELEMENTS   10
-static bclock_element *element_list[NUM_ELEMENTS] ;
-static unsigned elist_len = 0 ;  //  how many elements are *actually* in element_list[] ??
+// #define  NUM_ELEMENTS   10
+// static bclock_element *element_list[NUM_ELEMENTS] ;
+// static unsigned elist_len = 0 ;  //  how many elements are *actually* in element_list[] ??
 
 //  <vector> cannot be used here, because adding elements to the vector
 //  requires copying the existing elements, which requires a public
@@ -141,7 +141,7 @@ static unsigned elist_len = 0 ;  //  how many elements are *actually* in element
 std::vector<bclock_element> element_listv ;
 #endif
 
-// static bclock_element *element = NULL ;
+std::vector<bclock_element *> element_listv ;
 
 //*********************************************************************
 static void load_bitmap_files(HWND hwnd)
@@ -151,9 +151,9 @@ static void load_bitmap_files(HWND hwnd)
    bclock_element *be_temp ;
    unsigned idx = 0 ;
    unsigned j ;
-   char msg[81] ;
    unsigned start_element ;
 
+   //*********************************************************
    // bclock_element(HINSTANCE g_hInst, char *name, 
    //          unsigned width, unsigned flags,
    //          int mask_index, unsigned off_index, unsigned start_element);
@@ -182,7 +182,7 @@ static void load_bitmap_files(HWND hwnd)
    be_temp->mask_the_source(hdc) ;
    // be_temp->add_menu_data(menu_code++, "Large lamps") ;
    menu_code = be_temp->add_menu_data(menu_code, "Large lamps") ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
 
    //*********************************************************
    start_element = (bitmap_idx == idx) ? bit_menu : 3 ;
@@ -193,19 +193,18 @@ static void load_bitmap_files(HWND hwnd)
       "grey", "dark purple", "cyan", "green", "blue", "orange", "magenta", "purple", "red", "yellow" } ;
    for (j=0; j<10; j++)
       be_temp->add_color_menu_str(j, square_colors[j]) ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
 
    //*********************************************************
    start_element = (bitmap_idx == idx) ? bit_menu : 3 ;
    be_temp = new bclock_element(g_hInst, "balls.bmp", 0, BE_LINEAR, 0, 1, start_element);
-   // be_temp = new bclock_element(g_hInst, BM_BALLS, 0, BE_LINEAR, 0, 1, start_element);
    be_temp->mask_the_source(hdc) ;
    menu_code = be_temp->add_menu_data(menu_code, "Small lamps") ;
    static char * const balls_colors[7] = {
       " ", " ", "blue", "green", "orange", "yellow", "red" } ;
    for (j=0; j<7; j++)
       be_temp->add_color_menu_str(j, balls_colors[j]) ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
 
    //*********************************************************
    start_element = (bitmap_idx == idx) ? bit_menu : 5 ;
@@ -217,7 +216,7 @@ static void load_bitmap_files(HWND hwnd)
       " ", " ", "purple", "ecru", "verdant", "green", "tan", "fuchsia", "purple2", "red", "cyan", "yellow", 0 } ;
    for (j=0; ceramics_colors[j] != 0; j++)
       be_temp->add_color_menu_str(j, ceramics_colors[j]) ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
 
    //*********************************************************
    start_element = (bitmap_idx == idx) ? bit_menu : 6 ;
@@ -228,7 +227,7 @@ static void load_bitmap_files(HWND hwnd)
       " ", " ", "green", "cyan", "blue", "pink", "red", "brown", "orange", "yellow", 0 } ;
    for (j=0; accent_colors[j] != 0; j++)
       be_temp->add_color_menu_str(j, accent_colors[j]) ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
 
    //*********************************************************
    start_element = (bitmap_idx == idx) ? bit_menu : 6 ;
@@ -239,7 +238,7 @@ static void load_bitmap_files(HWND hwnd)
       " ", " ", "grey", "blue", "cyan", "yellow", "green", "purple", "red", 0 } ;
    for (j=0; marble_colors[j] != 0; j++)
       be_temp->add_color_menu_str(j, marble_colors[j]) ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
 
    //*********************************************************
    start_element = (bitmap_idx == idx) ? bit_menu : 3 ;
@@ -250,7 +249,7 @@ static void load_bitmap_files(HWND hwnd)
       " ", " ", "blue", "green", "red", "yellow", 0 } ;
    for (j=0; tiny_leds_colors[j] != 0; j++)
       be_temp->add_color_menu_str(j, tiny_leds_colors[j]) ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
 
    //*********************************************************
    start_element = (bitmap_idx == idx) ? bit_menu : 2 ;
@@ -264,7 +263,7 @@ static void load_bitmap_files(HWND hwnd)
    be_temp->add_color_menu_str(6, "yellow") ;
    be_temp->mask_the_source(hdc) ;
    menu_code = be_temp->add_menu_data(menu_code, "LEDs") ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
 
    //*********************************************************
    start_element = (bitmap_idx == idx) ? bit_menu : 6 ;
@@ -275,7 +274,7 @@ static void load_bitmap_files(HWND hwnd)
       " ", "blue", "red", "brown", "orange", "yellow", "green", "cyan", "blue", "fuchsia", 0 } ;
    for (j=0; light_colors[j] != 0; j++)
       be_temp->add_color_menu_str(j, light_colors[j]) ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
 
    //*********************************************************
    //                 width         mask offset start_el
@@ -289,19 +288,8 @@ static void load_bitmap_files(HWND hwnd)
       be_temp->add_color_menu_str(j, drawn_colors[j]) ;
    }
    be_temp->set_element_attr(crfg, crbg) ;
-   element_list[idx++] = be_temp ;
+   element_listv.emplace_back(be_temp);
    
-   elist_len = idx ;
-
-   //  this is an insufficient test; the program may abort
-   //  before we can get to this test, if overrun occurs...
-   //  That's okay, though... converting this array to <vector> will solve this problem.
-   if (idx > NUM_ELEMENTS) {  //lint !e774
-      wsprintf(msg, "too many elements created (%u vs %u)\n", idx, NUM_ELEMENTS) ;
-      OutputDebugString(msg) ;
-      MessageBox(NULL, msg, "DANGER!!", MB_OK) ;
-   }
-
    ReleaseDC (hwnd, hdc) ;
 }
 
@@ -310,9 +298,8 @@ static void draw_horiz_binary_time(HDC hdc, unsigned row, unsigned tvalue)
 {
    unsigned mask = 0x20 ;
    unsigned idx = LED_COL ;
-   // for (unsigned j=0; j<8; j++) {
    for (unsigned j=0; j<6; j++) {
-      element_list[bitmap_idx]->draw_sprite(hdc, (tvalue & mask), idx, row);
+      element_listv[bitmap_idx]->draw_sprite(hdc, (tvalue & mask), idx, row);
       idx += SPRITE_WIDTH + 4 ;
       mask >>= 1 ;
    }
@@ -322,13 +309,13 @@ static void draw_horiz_binary_time(HDC hdc, unsigned row, unsigned tvalue)
 static void draw_bcd_time(HDC hdc, unsigned row, unsigned time_seg, unsigned draw_flags)
 {
    if (draw_flags & 8)
-      element_list[bitmap_idx]->draw_sprite(hdc, (time_seg & 8), row, BLANK_ROW);
+      element_listv[bitmap_idx]->draw_sprite(hdc, (time_seg & 8), row, BLANK_ROW);
    if (draw_flags & 4)
-      element_list[bitmap_idx]->draw_sprite(hdc, (time_seg & 4), row, HOURS_ROW);
+      element_listv[bitmap_idx]->draw_sprite(hdc, (time_seg & 4), row, HOURS_ROW);
    if (draw_flags & 2)
-      element_list[bitmap_idx]->draw_sprite(hdc, (time_seg & 2), row, MINS_ROW);
+      element_listv[bitmap_idx]->draw_sprite(hdc, (time_seg & 2), row, MINS_ROW);
    if (draw_flags & 1)
-      element_list[bitmap_idx]->draw_sprite(hdc, (time_seg & 1), row, SECS_ROW);
+      element_listv[bitmap_idx]->draw_sprite(hdc, (time_seg & 1), row, SECS_ROW);
 }
 
 //*********************************************************************
@@ -443,7 +430,6 @@ static bool do_timer(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVO
 //*******************************************************************
 static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOID private_data)
 {
-   uint j ;
    DWORD cmd = HIWORD (wParam) ;
    DWORD target = LOWORD(wParam) ;
    // putf(&this_term, "WM_COMMAND: cmd=%u, target=%u", cmd, target) ;
@@ -453,32 +439,33 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
       //******************************************************
       //  first check for a hit among the block_elements
       //******************************************************
-      for (j=0; j<elist_len; j++) {
-         int temp_idx = element_list[j]->get_menu_id(LOWORD (wParam)) ;
+      // for(auto &eltemp : element_listv) {
+      //    eltemp->debug_dump_data(j);
+      // }
+      
+      // for (j=0; j<elist_len; j++) {
+      for(auto &eltemp : element_listv) {
+         int temp_idx = eltemp->get_menu_id(LOWORD (wParam)) ;
          if (temp_idx >= 0) {
-            // bitmap_idx = LOWORD (wParam) - ID_LAMPS0;
-            // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_UNCHECKED);
-            element_list[bitmap_idx]->check_menu_item(hPopMenu, MF_UNCHECKED);
-            // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_UNCHECKED);
-            element_list[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_UNCHECKED);
+            //  de-activate previous element
+            eltemp->check_menu_item(hPopMenu, MF_UNCHECKED);
+            eltemp->check_sub_menu_item(hPopMenu, MF_UNCHECKED);
             
             //  activate next element
             bitmap_idx = (unsigned) temp_idx ;
-            bit_menu = element_list[bitmap_idx]->get_curr_element() ;
+            bit_menu = eltemp->get_curr_element() ;
             // syslog("select bitmap_idx: %u, bit_menu: %u\n", bitmap_idx, bit_menu);
-            // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
-            element_list[bitmap_idx]->check_menu_item(hPopMenu, MF_CHECKED);
-            // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
-            element_list[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_CHECKED);
+            eltemp->check_menu_item(hPopMenu, MF_CHECKED);
+            eltemp->check_sub_menu_item(hPopMenu, MF_CHECKED);
             save_cfg_file();
             found = 1 ;
             break;
          }
          //  temp_idx == -1 if BE_DRAWN color change was selected
          else {
-            if (element_list[j]->get_flags() & BE_DRAWN) {
-               crfg = element_list[j]->get_attr_high();
-               crbg = element_list[j]->get_attr_low();
+            if (eltemp->get_flags() & BE_DRAWN) {
+               crfg = eltemp->get_attr_high();
+               crbg = eltemp->get_attr_low();
                save_cfg_file();
             }
          }
@@ -503,12 +490,15 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
             return true ;
             
          case ID_DUMP_BIN_DATA:
-            for (j=0; j<elist_len; j++) {
-               // syslog("%02u: menu code: %u, submenu code: %u, curr_el: %2u\n", j, 
-               //    element_list[j]->get_menu_code(),
-               //    element_list[j]->get_sub_menu_code(),
-               //    element_list[j]->get_curr_element());
-               element_list[j]->debug_dump_data(j);
+            // for (j=0; j<elist_len; j++) {
+            //    // syslog("%02u: menu code: %u, submenu code: %u, curr_el: %2u\n", j, 
+            //    //    element_list[j]->get_menu_code(),
+            //    //    element_list[j]->get_sub_menu_code(),
+            //    //    element_list[j]->get_curr_element());
+            //    element_listv[j]->debug_dump_data(j);
+            // }
+            for(auto &eltemp : element_listv) {
+               eltemp->debug_dump_data();
             }
             return true ;
             
@@ -548,6 +538,7 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
 static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOID private_data)
 {
    POINT lpClickPoint;
+   // bclock_element * elptr ;
    // event genereted by a system tray - the type of tray event that
    // generated the message can be found in lParam
    switch (lParam)   {
@@ -560,9 +551,13 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          AppendMenu(hPopMenu, MF_STRING, ID_UNUSED, _T("derelict's binary clock")) ;
          AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
 
-         for (uint j=0; j<elist_len; j++) {
-            HMENU hMenuTemp = (HMENU) element_list[j]->build_options_menu() ;
-            AppendMenu(hPopMenu, MF_POPUP, (UINT) hMenuTemp, _T(element_list[j]->get_menu_str())) ;
+         // for (uint j=0; j<elist_len; j++) {
+         //    HMENU hMenuTemp = (HMENU) element_listv[j]->build_options_menu() ;
+         //    AppendMenu(hPopMenu, MF_POPUP, (UINT) hMenuTemp, _T(element_listv[j]->get_menu_str())) ;
+         // }
+         for(auto &eltemp : element_listv) {
+            HMENU hMenuTemp = (HMENU) eltemp->build_options_menu() ;
+            AppendMenu(hPopMenu, MF_POPUP, (UINT) hMenuTemp, _T(eltemp->get_menu_str())) ;
          }
 
          AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
@@ -573,9 +568,9 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          
          // CheckMenuItem (hPopMenu, (UINT) menu_handles[bitmap_idx], MF_CHECKED);
          // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
-         element_list[bitmap_idx]->check_menu_item(hPopMenu, MF_CHECKED);
+         element_listv[bitmap_idx]->check_menu_item(hPopMenu, MF_CHECKED);
          // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
-         element_list[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_CHECKED);
+         element_listv[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_CHECKED);
       }
 
       SetForegroundWindow(hwnd);
@@ -604,9 +599,9 @@ static bool do_close(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVO
 static bool do_destroy(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOID private_data)
 {
    // syslog("Main window WM_DESTROY\n") ;
-   for (uint j=0; j<elist_len; j++) {
-      delete element_list[j] ;
-   }
+   // for (uint j=0; j<elist_len; j++) {
+   //    delete element_list[j] ;
+   // }
 
    if (timerID != 0) {
       KillTimer(hwnd, timerID) ;
