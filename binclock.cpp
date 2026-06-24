@@ -146,17 +146,13 @@ static void load_bitmap_files(HWND hwnd)
    HDC hdc = GetDC(hwnd) ;
    unsigned menu_code = ID_LAMPS0 ;
    bclock_element *be_temp ;
-   unsigned idx = 0 ;
    unsigned j ;
-   unsigned start_element ;
 
    //*********************************************************
-   // bclock_element(HINSTANCE g_hInst, char *name, 
-   //          unsigned width, unsigned flags,
-   //          int mask_index, unsigned off_index, unsigned start_element);
-   start_element = (bitmap_idx == idx) ? bit_menu : 10 ;
-   // binclock.cpp:159:4: warning: assigning newly created 'gsl::owner<>' to non-owner 'bclock_element *' [cppcoreguidelines-owning-memory]
-   be_temp = new bclock_element(g_hInst, "ledarray.bmp", 22, BE_LINEAR, 3, 4, start_element);
+   // start_element = (bitmap_idx == idx) ? bit_menu : 10 ;
+   // binclock.cpp:159:4: warning: assigning newly created 'gsl::owner<>' to non-owner 'bclock_element *' 
+   //                     [cppcoreguidelines-owning-memory]
+   be_temp = new bclock_element(g_hInst, "ledarray.bmp", 22, BE_LINEAR, 3, 4, 10);
    
    be_temp->add_skip_element(0) ;
    be_temp->add_skip_element(1) ;
@@ -172,13 +168,11 @@ static void load_bitmap_files(HWND hwnd)
    be_temp->add_skip_element(12) ;
    be_temp->add_color_menu_str(13, "yellow") ;
    be_temp->mask_the_source(hdc) ;
-   // be_temp->add_menu_data(menu_code++, "Large lamps") ;
    menu_code = be_temp->add_menu_data(menu_code, "Large lamps") ;
    element_listv.emplace_back(be_temp);
 
    //*********************************************************
-   start_element = (bitmap_idx == idx) ? bit_menu : 3 ;
-   be_temp = new bclock_element(g_hInst, "square2.bmp", 0, BE_LINEAR, -1, 0, start_element);
+   be_temp = new bclock_element(g_hInst, "square2.bmp", 0, BE_LINEAR, -1, 0, 3);
    be_temp->set_image_offsets(0, 2) ;
    menu_code = be_temp->add_menu_data(menu_code, "Square lamps") ;
    static char * const square_colors[10] = {
@@ -188,8 +182,7 @@ static void load_bitmap_files(HWND hwnd)
    element_listv.emplace_back(be_temp);
 
    //*********************************************************
-   start_element = (bitmap_idx == idx) ? bit_menu : 3 ;
-   be_temp = new bclock_element(g_hInst, "balls.bmp", 0, BE_LINEAR, 0, 1, start_element);
+   be_temp = new bclock_element(g_hInst, "balls.bmp", 0, BE_LINEAR, 0, 1, 3);
    be_temp->mask_the_source(hdc) ;
    menu_code = be_temp->add_menu_data(menu_code, "Small lamps") ;
    static char * const balls_colors[7] = {
@@ -199,8 +192,7 @@ static void load_bitmap_files(HWND hwnd)
    element_listv.emplace_back(be_temp);
 
    //*********************************************************
-   start_element = (bitmap_idx == idx) ? bit_menu : 5 ;
-   be_temp = new bclock_element(g_hInst, "ceramics.bmp", 0, BE_LINEAR, 0, 1, start_element);
+   be_temp = new bclock_element(g_hInst, "ceramics.bmp", 0, BE_LINEAR, 0, 1, 5);
    be_temp->set_image_offsets(-5, -5) ;
    be_temp->mask_the_source(hdc) ;
    menu_code = be_temp->add_menu_data(menu_code, "Ceramic lamps") ;
@@ -211,8 +203,7 @@ static void load_bitmap_files(HWND hwnd)
    element_listv.emplace_back(be_temp);
 
    //*********************************************************
-   start_element = (bitmap_idx == idx) ? bit_menu : 6 ;
-   be_temp = new bclock_element(g_hInst, "accent.bmp", 0, BE_LINEAR, 0, 1, start_element);
+   be_temp = new bclock_element(g_hInst, "accent.bmp", 0, BE_LINEAR, 0, 1, 6);
    be_temp->mask_the_source(hdc) ;
    menu_code = be_temp->add_menu_data(menu_code, "Accent balls") ;
    static char * const accent_colors[] = {
@@ -222,8 +213,7 @@ static void load_bitmap_files(HWND hwnd)
    element_listv.emplace_back(be_temp);
 
    //*********************************************************
-   start_element = (bitmap_idx == idx) ? bit_menu : 6 ;
-   be_temp = new bclock_element(g_hInst, "marbles.bmp", 0, BE_LINEAR, 0, 1, start_element);
+   be_temp = new bclock_element(g_hInst, "marbles.bmp", 0, BE_LINEAR, 0, 1, 6);
    be_temp->mask_the_source(hdc) ;
    menu_code = be_temp->add_menu_data(menu_code, "Glass marbles") ;
    static char * const marble_colors[] = {
@@ -233,8 +223,7 @@ static void load_bitmap_files(HWND hwnd)
    element_listv.emplace_back(be_temp);
 
    //*********************************************************
-   start_element = (bitmap_idx == idx) ? bit_menu : 3 ;
-   be_temp = new bclock_element(g_hInst, "leds.tiny.bmp", 0, BE_LINEAR, 0, 1, start_element);
+   be_temp = new bclock_element(g_hInst, "leds.tiny.bmp", 0, BE_LINEAR, 0, 1, 3);
    be_temp->mask_the_source(hdc) ;
    menu_code = be_temp->add_menu_data(menu_code, "Tiny leds") ;
    static char * const tiny_leds_colors[] = {
@@ -244,8 +233,8 @@ static void load_bitmap_files(HWND hwnd)
    element_listv.emplace_back(be_temp);
 
    //*********************************************************
-   start_element = (bitmap_idx == idx) ? bit_menu : 2 ;
-   be_temp = new bclock_element(g_hInst, "leds.bmp", 0, BE_PAIRS, 0, start_element-1, start_element);
+   // be_temp = new bclock_element(g_hInst, "leds.bmp", 0, BE_PAIRS, 0, start_element-1, 2);
+   be_temp = new bclock_element(g_hInst, "leds.bmp", 0, BE_PAIRS, 0, 1, 2);
    be_temp->set_image_offsets(-2, -5) ;
    be_temp->add_skip_element(1) ;
    be_temp->add_color_menu_str(2, "green") ;
@@ -258,8 +247,7 @@ static void load_bitmap_files(HWND hwnd)
    element_listv.emplace_back(be_temp);
 
    //*********************************************************
-   start_element = (bitmap_idx == idx) ? bit_menu : 6 ;
-   be_temp = new bclock_element(g_hInst, "lights.bmp", 0, BE_LINEAR, 0, 1, start_element);
+   be_temp = new bclock_element(g_hInst, "lights.bmp", 0, BE_LINEAR, 0, 1, 6);
    be_temp->mask_the_source(hdc) ;
    menu_code = be_temp->add_menu_data(menu_code, "Glass lights") ;
    static char * const light_colors[] = {
@@ -440,8 +428,9 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
          int temp_idx = eltemp->get_menu_id(LOWORD (wParam)) ;
          if (temp_idx >= 0) {
             //  de-activate previous element
-            eltemp->check_menu_item(hPopMenu, MF_UNCHECKED);
-            eltemp->check_sub_menu_item(hPopMenu, MF_UNCHECKED);
+            
+            element_listv[bitmap_idx]->check_menu_item(hPopMenu, MF_UNCHECKED);
+            element_listv[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_UNCHECKED);
             
             //  activate next element
             bitmap_idx = (unsigned) temp_idx ;
@@ -558,10 +547,9 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          // AppendMenu(hPopMenu, MF_STRING, ID_DUMP_BIN_DATA,  _T("Dump menu settings"));  //  DEBUG
          AppendMenu(hPopMenu, MF_STRING, ID_TRAYEXIT,       _T("Exit from program"));
          
-         // CheckMenuItem (hPopMenu, (UINT) menu_handles[bitmap_idx], MF_CHECKED);
          // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_menu_handle(), MF_CHECKED);
-         element_listv[bitmap_idx]->check_menu_item(hPopMenu, MF_CHECKED);
          // CheckMenuItem (hPopMenu, (UINT) element_list[bitmap_idx]->get_sub_menu_code(), MF_CHECKED);
+         element_listv[bitmap_idx]->check_menu_item(hPopMenu, MF_CHECKED);
          element_listv[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_CHECKED);
       }
 

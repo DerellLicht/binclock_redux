@@ -268,13 +268,13 @@ void bclock_element::add_color_menu_str(unsigned menu_idx, char *mstr)
 //****************************************************************
 void bclock_element::check_menu_item(HMENU hPopMenu, uint checked_state)
 {
-   CheckMenuItem (hPopMenu, (UINT) menu_hdl, MF_UNCHECKED);
+   CheckMenuItem (hPopMenu, (UINT) menu_hdl, checked_state);
 }
 
 //****************************************************************
 void bclock_element::check_sub_menu_item(HMENU hPopMenu, uint checked_state)
 {
-   CheckMenuItem (hPopMenu, (UINT) menu_code + curr_element, MF_UNCHECKED);
+   CheckMenuItem (hPopMenu, (UINT) menu_code + curr_element, checked_state);
 }
 
 //****************************************************************
