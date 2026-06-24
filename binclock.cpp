@@ -428,7 +428,6 @@ static bool do_command(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LP
          int temp_idx = eltemp->get_menu_id(LOWORD (wParam)) ;
          if (temp_idx >= 0) {
             //  de-activate previous element
-            
             element_listv[bitmap_idx]->check_menu_item(hPopMenu, MF_UNCHECKED);
             element_listv[bitmap_idx]->check_sub_menu_item(hPopMenu, MF_UNCHECKED);
             

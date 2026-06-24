@@ -47,7 +47,6 @@ Checks: |
   -modernize-use-auto,
   -modernize-avoid-variadic-functions,
   -modernize-use-using,
-  -modernize-use-nodiscard,
   performance-*,
   -performance-no-int-to-ptr,
   -performance-enum-size,

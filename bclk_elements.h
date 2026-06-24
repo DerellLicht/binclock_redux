@@ -63,7 +63,7 @@ private:
    COLORREF attr_low  ;
    
    //  internal functions
-   char *get_system_message(void) const ;
+   [[nodiscard]]char *get_system_message(void) const ;
    COLORREF select_color(COLORREF init_attr);
    void BoxDoNotUse(HDC hdc, int x0, int y0, int x1, int y1, unsigned style, COLORREF fgattr, COLORREF bgattr);
    void Solid_Box(HDC hdc, int x0, int y0, int x1, int y1, COLORREF Color);
@@ -91,21 +91,21 @@ public:
    void set_image_offsets(int dx, int dy) ;
    void mask_the_source(HDC hdc) ;
    void draw_sprite(HDC hdc, unsigned on_noff, unsigned xidest, unsigned yidest);
-   unsigned get_on_color(void) const   //  only for BE_DRAWN instance
+   [[nodiscard]]unsigned get_on_color(void) const   //  only for BE_DRAWN instance
       { return curr_element ; } ;
-   unsigned get_off_color(void) const  //  only for BE_DRAWN instance
+   [[nodiscard]]unsigned get_off_color(void) const  //  only for BE_DRAWN instance
       { return off_idx ; } ;
    // unsigned get_menu_code(void) const 
    //    { return menu_code ; } ;
    // unsigned get_sub_menu_code(void) const 
    //    { return menu_code + curr_element ; } ;
-   unsigned get_curr_element(void) const 
+   [[nodiscard]]unsigned get_curr_element(void) const 
       { return curr_element ; } ;
-   unsigned get_attr_high(void) const 
+   [[nodiscard]]unsigned get_attr_high(void) const 
       { return attr_high ; } ;
-   unsigned get_attr_low(void) const 
+   [[nodiscard]]unsigned get_attr_low(void) const 
       { return attr_low ; } ;
-   unsigned get_flags(void) const 
+   [[nodiscard]]unsigned get_flags(void) const 
       { return flags ; } ;
    unsigned next_led_color(void) ;
    void add_color_menu_str(unsigned menu_idx, char *mstr) ;
