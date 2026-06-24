@@ -158,11 +158,6 @@ static void load_bitmap_files(HWND hwnd)
    // binclock.cpp:159:4: warning: assigning newly created 'gsl::owner<>' to non-owner 'bclock_element *' [cppcoreguidelines-owning-memory]
    be_temp = new bclock_element(g_hInst, "ledarray.bmp", 22, BE_LINEAR, 3, 4, start_element);
    
-   // char *ledname = "ledarray.bmp" ;
-   // element_listv.emplace_back(g_hInst, ledname, 22, BE_LINEAR, 3, 4, start_element);
-   // idx = element_listv.size() - 1 ;
-   // be_temp = &element_listv[idx] ;
-   
    be_temp->add_skip_element(0) ;
    be_temp->add_skip_element(1) ;
    be_temp->add_color_menu_str(2, "green") ;
