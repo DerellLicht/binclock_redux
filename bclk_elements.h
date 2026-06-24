@@ -18,9 +18,6 @@
 #include <string>
 #include <memory>
 
-// #define USE_UNIQUE_PTR
-#undef USE_UNIQUE_PTR
-
 #define  BE_LINEAR   0
 #define  BE_PAIRS    1
 #define  BE_DRAWN    2
@@ -52,13 +49,8 @@ private:
    unsigned num_elements ; //  number of elements in secondary menu
    unsigned menu_code ;
    unsigned curr_element ; //  current sub-menu index
-#ifdef  USE_UNIQUE_PTR   
-   std::unique_ptr<HBITMAP> hSpriteBitmap;
-   std::unique_ptr<HMENU> menu_hdl ;  //  this is *also* a pointer
-#else
    HBITMAP hSpriteBitmap;
    HMENU menu_hdl ;  //  this is *also* a pointer
-#endif   
    unsigned object_code ;
    std::vector<std::string> color_menu_str_list;
    char menu_str[30] ;

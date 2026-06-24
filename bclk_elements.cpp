@@ -130,9 +130,6 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
 {
    BITMAP bm;
    // object_code = be_object_num++ ;
-#ifdef  USE_UNIQUE_PTR   
-   HBITMAP hbmtemp ;
-#endif   
 
    //  if no filename provided, assume BE_DRAWN format
    if (name == 0) {
@@ -154,35 +151,20 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
    //  open the bitmap file, read sprite images into memory
    else {
       strncpy(bm_name, name, sizeof(bm_name)-1) ;
-#ifdef  USE_UNIQUE_PTR   
-      hbmtemp = (HBITMAP) LoadImage (g_hInst, bm_name, 
-#else      
       hSpriteBitmap = (HBITMAP) LoadImage (g_hInst, bm_name, 
-#endif      
          IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
       if (hSpriteBitmap == NULL) {
          syslog("%s: LoadImage: %s\n", bm_name, get_system_message()) ;
       }
-#ifdef  USE_UNIQUE_PTR   
-      if (GetObject ((HGDIOBJ) hbmtemp, sizeof (BITMAP), &bm) == 0) {
-#else
       if (GetObject ((HGDIOBJ) hSpriteBitmap, sizeof (BITMAP), &bm) == 0) {
-#endif      
          syslog("%s: GetObject: %s\n", bm_name, get_system_message()) ;
       }
-#ifdef  USE_UNIQUE_PTR   
-      hSpriteBitmap = std::make_unique<HBITMAP>(hbmtemp);
-#endif      
       el_height = bm.bmHeight ;
       if (el_width == 0) 
          el_width = bm.bmHeight ;
       num_elements = (unsigned) bm.bmWidth / el_width ;
    }
    
-#ifdef  USE_UNIQUE_PTR   
-   menu_hdl = std::make_unique<HMENU>(nullptr);
-#endif   
-
    // syslog("%s: loaded, width=%u, elements=%u\n", bm_name, el_width, num_elements) ;
    unsigned j ;
    for (j=0; j<num_elements; j++) {

@@ -135,11 +135,8 @@ static void set_window_position(HWND hwnd)
 //  <vector> cannot be used here, because adding elements to the vector
 //  requires copying the existing elements, which requires a public
 //  copy constructor.  Much more data available here:
+//  It *could* be used, if we implemented a move constructor...
 // https://www.reddit.com/r/cpp_questions/comments/1u47huj/next_step_in_converting_c_arrays_to_vector/
-
-#ifdef  USE_UNIQUE_PTR   
-std::vector<bclock_element> element_listv ;
-#endif
 
 std::vector<bclock_element *> element_listv ;
 
