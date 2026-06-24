@@ -51,7 +51,7 @@ private:
    unsigned curr_element ; //  current sub-menu index
    HBITMAP hSpriteBitmap;
    HMENU menu_hdl ;  //  this is *also* a pointer
-   unsigned object_code ;
+   unsigned object_code ;  //  class instance number (0-based)
    std::vector<std::string> color_menu_str_list;
    char menu_str[30] ;
 
@@ -91,9 +91,9 @@ public:
    void set_image_offsets(int dx, int dy) ;
    void mask_the_source(HDC hdc) ;
    void draw_sprite(HDC hdc, unsigned on_noff, unsigned xidest, unsigned yidest);
-   unsigned get_on_color(void) const 
+   unsigned get_on_color(void) const   //  only for BE_DRAWN instance
       { return curr_element ; } ;
-   unsigned get_off_color(void) const 
+   unsigned get_off_color(void) const  //  only for BE_DRAWN instance
       { return off_idx ; } ;
    // unsigned get_menu_code(void) const 
    //    { return menu_code ; } ;
