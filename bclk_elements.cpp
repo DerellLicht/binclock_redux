@@ -221,6 +221,9 @@ bclock_element::bclock_element(HINSTANCE g_hInst, char *name, unsigned width,
 bclock_element::~bclock_element()
 {
    DeleteObject ((HGDIOBJ) hSpriteBitmap);
+   if (menu_hdl != 0) {
+      DestroyMenu(menu_hdl);
+   }
 }
 
 //******************************************************************
