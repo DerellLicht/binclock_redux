@@ -1,0 +1,107 @@
+[
+ {
+  "directory": "D:\\SourceCode\\Git\\binclock_redux",
+  "arguments": [
+   "D:/llvm/bin/i686-w64-mingw32-clang++.exe",
+   "-Wall",
+   "-O3",
+   "-Wno-write-strings",
+   "-Ider_libs",
+   "-c",
+   "binclock.cpp",
+   "-o",
+   "binclock.o"
+  ],
+  "file": "binclock.cpp"
+ },
+ {
+  "directory": "D:\\SourceCode\\Git\\binclock_redux",
+  "arguments": [
+   "D:/llvm/bin/i686-w64-mingw32-clang++.exe",
+   "-Wall",
+   "-O3",
+   "-Wno-write-strings",
+   "-Ider_libs",
+   "-c",
+   "about.cpp",
+   "-o",
+   "about.o"
+  ],
+  "file": "about.cpp"
+ },
+ {
+  "directory": "D:\\SourceCode\\Git\\binclock_redux",
+  "arguments": [
+   "D:/llvm/bin/i686-w64-mingw32-clang++.exe",
+   "-Wall",
+   "-O3",
+   "-Wno-write-strings",
+   "-Ider_libs",
+   "-c",
+   "bclk_elements.cpp",
+   "-o",
+   "bclk_elements.o"
+  ],
+  "file": "bclk_elements.cpp"
+ },
+ {
+  "directory": "D:\\SourceCode\\Git\\binclock_redux",
+  "arguments": [
+   "D:/llvm/bin/i686-w64-mingw32-clang++.exe",
+   "-Wall",
+   "-O3",
+   "-Wno-write-strings",
+   "-Ider_libs",
+   "-c",
+   "config.cpp",
+   "-o",
+   "config.o"
+  ],
+  "file": "config.cpp"
+ },
+ {
+  "directory": "D:\\SourceCode\\Git\\binclock_redux",
+  "arguments": [
+   "D:/llvm/bin/i686-w64-mingw32-clang++.exe",
+   "-Wall",
+   "-O3",
+   "-Wno-write-strings",
+   "-Ider_libs",
+   "-c",
+   "der_libs/hyperlinks.cpp",
+   "-o",
+   "der_libs/hyperlinks.o"
+  ],
+  "file": "der_libs/hyperlinks.cpp"
+ },
+ {
+  "directory": "D:\\SourceCode\\Git\\binclock_redux",
+  "arguments": [
+   "D:/llvm/bin/i686-w64-mingw32-clang++.exe",
+   "-Wall",
+   "-O3",
+   "-Wno-write-strings",
+   "-Ider_libs",
+   "-c",
+   "der_libs/common_funcs.cpp",
+   "-o",
+   "der_libs/common_funcs.o"
+  ],
+  "file": "der_libs/common_funcs.cpp"
+ },
+ {
+  "directory": "D:\\SourceCode\\Git\\binclock_redux",
+  "arguments": [
+   "D:/llvm/bin/i686-w64-mingw32-clang++.exe",
+   "-Wall",
+   "-O3",
+   "-Wno-write-strings",
+   "-Ider_libs",
+   "-c",
+   "der_libs/winmsgs.cpp",
+   "-o",
+   "der_libs/winmsgs.o"
+  ],
+  "file": "der_libs/winmsgs.cpp"
+ }
+]

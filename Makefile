@@ -35,19 +35,6 @@ LiFLAGS += -Ider_libs
 
 LINTFILES=lintdefs.cpp lintdefs.ref.h 
 
-#  clang-tidy options
-#CHFLAGS = -header-filter=.*
-CHTAIL = --
-CHTAIL += -Ider_libs
-#CHTAIL += -std=c++14
-CHTAIL += -Wall
-ifeq ($(USE_64BIT),YES)
-CHTAIL += -DUSE_64BIT
-endif
-ifeq ($(USE_UNICODE),YES)
-CHTAIL += -DUNICODE -D_UNICODE
-endif
-
 BIN=binclock
 BINX=$(BIN).exe
 
@@ -79,7 +66,7 @@ lint:
 	cmd /C "c:\lint9\lint-nt +v -width(160,4) $(LiFLAGS) -ic:\lint9 mingw.lnt -os(_lint.tmp) $(LINTFILES) $(CSRC)"
 
 check:
-	cmd /C "d:\llvm\bin\clang-tidy.exe $(CHFLAGS) $(CSRC) $(CHTAIL)"
+	cmd /C "d:\llvm\bin\clang-tidy.exe $(CSRC)"
 
 depend:
 	makedepend $(CFLAGS) $(CSRC)

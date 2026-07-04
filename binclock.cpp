@@ -531,10 +531,6 @@ static bool do_user(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, LPVOI
          AppendMenu(hPopMenu, MF_STRING, ID_UNUSED, _T("derelict's binary clock")) ;
          AppendMenu(hPopMenu, MF_SEPARATOR, 0, NULL) ;
 
-         // for (uint j=0; j<elist_len; j++) {
-         //    HMENU hMenuTemp = (HMENU) element_listv[j]->build_options_menu() ;
-         //    AppendMenu(hPopMenu, MF_POPUP, (UINT) hMenuTemp, _T(element_listv[j]->get_menu_str())) ;
-         // }
          for(auto &eltemp : element_listv) {
             HMENU hMenuTemp = (HMENU) eltemp->build_options_menu() ;
             AppendMenu(hPopMenu, MF_POPUP, (UINT) hMenuTemp, _T(eltemp->get_menu_str())) ;
