@@ -57,7 +57,7 @@ clean:
 
 dist:
 	rm -f *.zip
-	zip $(BIN).zip $(BIN).exe *.bmp readme.md LICENSE
+	zip $(BIN).zip $(BIN).exe *.bmp readme.md LICENSE.txt
 
 wc:
 	wc -l $(CSRC) *.rc
