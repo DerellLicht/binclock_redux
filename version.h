@@ -8,5 +8,5 @@
 //    1.02     06/12/26    Implement -Weffc++ 
 //    1.03     06/13/26    Sub-menus are now being properly checked/unchecked
 //*********************************************************************************************
-#define VerNum    "V1.02"
+#define VerNum    "V1.03"
 

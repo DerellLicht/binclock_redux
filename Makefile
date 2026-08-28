@@ -42,7 +42,7 @@ clean:
 
 dist:
 	rm -f *.zip
-	zip $(BIN).zip $(BIN).exe *.bmp readme.md LICENSE.txt
+	zip $(BIN).zip $(BIN).exe *.bmp readme.md LICENSE.txt CHANGELOG.md
 
 wc:
 	wc -l $(CSRC) *.rc
